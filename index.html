@@ -1,464 +1,1042 @@
-<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #e0e6ed; background-color: #121820; max-width: 950px; margin: auto; padding: 25px; border-radius: 8px;">
-    <header style="border-bottom: 3px solid #38bdf8; padding-bottom: 12px; margin-bottom: 25px;">
-        <h1 style="color: #38bdf8; margin-bottom: 4px;">Mastery Assessment Bank: The Lymphatic System &amp; Immunity</h1>
-        <p style="color: #94a3b8; font-style: italic; margin-top: 0;">BIOL 2402 | Anatomy &amp; Physiology II | OpenStax A&amp;P 2e Alignment</p>
-        <p style="color: #94a3b8; margin: 0;"><strong>Directions:</strong> Complete all 100 questions covering histology, gross anatomy, systemic fluid dynamics, innate immunity, and adaptive immunity before proceeding to the Respiratory System module.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lymphatics &amp; Immunity Mastery Engine</title>
+    <style>
+        :root {
+            --bg-canvas: #0b0f17;
+            --bg-card: #151d2a;
+            --bg-input: #1e293b;
+            --border: #334155;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.25);
+            --correct: #22c55e;
+            --correct-glow: rgba(34, 197, 94, 0.25);
+            --incorrect: #ef4444;
+            --incorrect-glow: rgba(239, 68, 68, 0.25);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .mastery-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        header {
+            padding: 24px;
+            background: #0f172a;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 0 0 6px 0;
+            font-size: 1.6rem;
+        }
+
+        .course-tag {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .hud {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            background: var(--bg-input);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-item {
+            text-align: center;
+        }
+
+        .hud-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .hud-val {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: var(--bg-input);
+            margin-top: 15px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--correct));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-stage {
+            padding: 30px 24px;
+        }
+
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .q-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-main);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .btn-opt {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .btn-opt:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-opt:focus-visible {
+            outline: 2px solid var(--accent);
+        }
+
+        .btn-opt.selected-correct {
+            background: rgba(34, 197, 94, 0.2) !important;
+            border-color: var(--correct) !important;
+            color: #86efac !important;
+            font-weight: 600;
+        }
+
+        .btn-opt.selected-wrong {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: var(--incorrect) !important;
+            color: #fca5a5 !important;
+        }
+
+        .btn-opt.show-correct {
+            border-color: var(--correct) !important;
+            background: rgba(34, 197, 94, 0.1) !important;
+        }
+
+        .feedback-card {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid transparent;
+        }
+
+        .feedback-card.correct {
+            display: block;
+            background: rgba(34, 197, 94, 0.1);
+            border-left-color: var(--correct);
+            color: #86efac;
+        }
+
+        .feedback-card.wrong {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--incorrect);
+            color: #fca5a5;
+        }
+
+        .btn-next {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            background: var(--accent);
+            color: #04121e;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-next:hover {
+            opacity: 0.9;
+        }
+
+        .mastery-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .mastery-badge {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-reset:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mastery-container" role="region" aria-label="Interactive Mastery Quiz Engine">
+    <header>
+        <h1>Mastery Engine: The Lymphatic System</h1>
+        <div class="course-tag">BIOL 2402 | Anatomy &amp; Physiology II | Adaptive Queue</div>
+        
+        <div class="hud" role="status" aria-live="polite">
+            <div class="hud-item">
+                <div class="hud-label">Mastered</div>
+                <div class="hud-val" id="hud-mastered">0</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Remaining Pool</div>
+                <div class="hud-val" id="hud-remaining">0</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Review Queue</div>
+                <div class="hud-val" id="hud-queue">0</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Current Streak</div>
+                <div class="hud-val" id="hud-streak">0</div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container" aria-label="Mastery Progress">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
     </header>
 
-    <main>
-        <section aria-labelledby="part1-mcq">
-            <h2 id="part1-mcq" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">Part I: Multiple Choice Questions (1–50)</h2>
-            <ol style="padding-left: 20px; color: #cbd5e1;">
-                <li style="margin-bottom: 15px;">Lymph fluid is primarily derived from which of the following physiological fluids?
-                    <br>A. Intracellular fluid
-                    <br>B. Interstitial fluid
-                    <br>C. Cerebrospinal fluid
-                    <br>D. Endolymph
-                </li>
-                <li style="margin-bottom: 15px;">Which structural feature allows lymphatic capillaries to absorb large proteins, cellular debris, and pathogens from interstitial spaces?
-                    <br>A. Continuous tight junctions and basement membranes
-                    <br>B. Overlapping endothelial flap-like minivalves anchored by collagen filaments
-                    <br>C. Thick muscular tunica media
-                    <br>D. Fenestrations with negatively charged filtration diaphragms
-                </li>
-                <li style="margin-bottom: 15px;">The specialized lymphatic capillaries located within the intestinal villi that absorb dietary lipids are termed:
-                    <br>A. Chylomicrons
-                    <br>B. Sinusoids
-                    <br>C. Lacteals
-                    <br>D. Peyer's patches
-                </li>
-                <li style="margin-bottom: 15px;">Fatty, milky lymph collected from the digestive tract is known as:
-                    <br>A. Chyme
-                    <br>B. Chyle
-                    <br>C. Colostrum
-                    <br>D. Transudate
-                </li>
-                <li style="margin-bottom: 15px;">The thoracic duct originates in the abdomen as an expanded sac called the:
-                    <br>A. Cisterna chyli
-                    <br>B. Hilum
-                    <br>C. Conus arteriosus
-                    <br>D. Splanchnic reservoir
-                </li>
-                <li style="margin-bottom: 15px;">The right lymphatic duct empties its lymph directly into the venous circulation at the junction of the:
-                    <br>A. Left internal jugular and left subclavian veins
-                    <br>B. Right internal jugular and right subclavian veins
-                    <br>C. Superior vena cava and azygos vein
-                    <br>D. Inferior vena cava and common iliac vein
-                </li>
-                <li style="margin-bottom: 15px;">Which anatomical region drains lymph into the thoracic duct rather than the right lymphatic duct?
-                    <br>A. Right pectoral region
-                    <br>B. Right side of the head
-                    <br>C. Left lower extremity
-                    <br>D. Right upper limb
-                </li>
-                <li style="margin-bottom: 15px;">Which mechanism does NOT assist in the propulsion of lymph along lymphatic vessels?
-                    <br>A. Skeletal muscle contractions
-                    <br>B. Respiratory pressure changes in the thorax
-                    <br>C. Smooth muscle rhythmic contractions in vessel walls
-                    <br>D. Direct hydrostatic pressure generated by ventricular systole
-                </li>
-                <li style="margin-bottom: 15px;">Which of the following is classified as a primary lymphoid organ?
-                    <br>A. Spleen
-                    <br>B. Red bone marrow
-                    <br>C. Palatine tonsil
-                    <br>D. Peyer's patch
-                </li>
-                <li style="margin-bottom: 15px;">Where do immunocompetent B lymphocytes complete their maturation process?
-                    <br>A. Thymus gland
-                    <br>B. Red bone marrow
-                    <br>C. Germinal centers of lymph nodes
-                    <br>D. White pulp of the spleen
-                </li>
-                <li style="margin-bottom: 15px;">In the thymus, T lymphocytes undergo positive and negative selection. Where does positive selection primarily take place?
-                    <br>A. Thymic cortex
-                    <br>B. Thymic medulla
-                    <br>C. Hassall's corpuscles
-                    <br>D. Connective tissue septa
-                </li>
-                <li style="margin-bottom: 15px;">The blood-thymus barrier functions to:
-                    <br>A. Stop mature T cells from exiting into venous circulation
-                    <br>B. Prevent circulating foreign antigens from prematurely activating developing T cells
-                    <br>C. Filter erythrocyte fragments from thymic cords
-                    <br>D. Supply hormones directly to splenic cords
-                </li>
-                <li style="margin-bottom: 15px;">What age-related structural change typically occurs in the thymus beginning after puberty?
-                    <br>A. Proliferation of medullary cords
-                    <br>B. Infiltration by fibrous connective tissue and adipose (involution)
-                    <br>C. Calcification of the fibrous capsule
-                    <br>D. Hyperplasia of cortical thymocytes
-                </li>
-                <li style="margin-bottom: 15px;">Lymph enters a lymph node via which vessels?
-                    <br>A. Efferent lymphatic vessels
-                    <br>B. Afferent lymphatic vessels
-                    <br>C. Splenic sinusoids
-                    <br>D. Central arterioles
-                </li>
-                <li style="margin-bottom: 15px;">Why does lymph flow slowly through a lymph node?
-                    <br>A. Efferent vessels outnumber afferent vessels
-                    <br>B. Afferent vessels outnumber efferent vessels, creating a bottleneck
-                    <br>C. Valves inside the node prevent forward propulsion
-                    <br>D. Lymph nodes lack internal sinuses
-                </li>
-                <li style="margin-bottom: 15px;">The pale, central area within a lymphoid follicle where activated B cells undergo clonal proliferation is called the:
-                    <br>A. Paracortex
-                    <br>B. Medullary cord
-                    <br>C. Germinal center
-                    <br>D. Trabecular sinus
-                </li>
-                <li style="margin-bottom: 15px;">The deep cortical region (paracortex) of a lymph node is dominated by:
-                    <br>A. Plasma cells
-                    <br>B. T lymphocytes
-                    <br>C. Erythrocytes
-                    <br>D. Reticular endothelial trabeculae
-                </li>
-                <li style="margin-bottom: 15px;">Which functional region of the spleen is responsible for removing old, rigid erythrocytes and recycling hemoglobin?
-                    <br>A. White pulp
-                    <br>B. Red pulp
-                    <br>C. Splenic sinusoids
-                    <br>D. Marginal zone
-                </li>
-                <li style="margin-bottom: 15px;">White pulp in the spleen consists primarily of:
-                    <br>A. Venous sinuses filled with macrophages
-                    <br>B. Lymphoid tissue surrounding central arterioles
-                    <br>C. Reticular fibers laden with senescent platelets
-                    <br>D. Adipose depots surrounding splenic trabeculae
-                </li>
-                <li style="margin-bottom: 15px;">The splenic cords containing abundant macrophages, plasma cells, and reticular fibers are also known as:
-                    <br>A. Cords of Billroth
-                    <br>B. Hassall's corpuscles
-                    <br>C. Peyer's bands
-                    <br>D. Trabeculae carneae
-                </li>
-                <li style="margin-bottom: 15px;">Which tonsils are located on either side of the posterior oropharynx and are most frequently excised during a tonsillectomy?
-                    <br>A. Pharyngeal tonsils
-                    <br>B. Lingual tonsils
-                    <br>C. Palatine tonsils
-                    <br>D. Tubal tonsils
-                </li>
-                <li style="margin-bottom: 15px;">An enlarged pharyngeal tonsil located in the nasopharynx is clinically designated as:
-                    <br>A. Peyer's patch
-                    <br>B. Adenoids
-                    <br>C. Lingual nodule
-                    <br>D. Lymphoma
-                </li>
-                <li style="margin-bottom: 15px;">Peyer's patches are characteristic aggregations of unencapsulated lymphoid tissue situated in the submucosa of the:
-                    <br>A. Duodenum
-                    <br>B. Jejunum
-                    <br>C. Ileum
-                    <br>D. Cecum
-                </li>
-                <li style="margin-bottom: 15px;">Which mucosal defense structure is attached to the posteromedial surface of the cecum?
-                    <br>A. Appendix
-                    <br>B. Spleen
-                    <br>C. Cisterna chyli
-                    <br>D. Inguinal nodule
-                </li>
-                <li style="margin-bottom: 15px;">Which of the following represents an anatomical and chemical barrier of the innate immune system?
-                    <br>A. Cytotoxic T cells
-                    <br>B. Stratified squamous keratinized epithelium and sebum
-                    <br>C. Memory B cells
-                    <br>D. Immunoglobulin G antibodies
-                </li>
-                <li style="margin-bottom: 15px;">Which enzyme present in saliva, tears, and mucus cleaves bacterial peptidoglycan cell walls?
-                    <br>A. Pepsin
-                    <br>B. Lysozyme
-                    <br>C. Peroxidase
-                    <br>D. Kinase
-                </li>
-                <li style="margin-bottom: 15px;">Which white blood cell is typically the first phagocytic responder to arrive at a site of acute bacterial invasion?
-                    <br>A. Eosinophil
-                    <br>B. Basophil
-                    <br>C. Neutrophil
-                    <br>D. Monocyte
-                </li>
-                <li style="margin-bottom: 15px;">Fixed macrophages resident in the liver sinusoids are called:
-                    <br>A. Microglia
-                    <br>B. Kupffer cells (stellate macrophages)
-                    <br>C. Langerhans cells
-                    <br>D. Osteoclasts
-                </li>
-                <li style="margin-bottom: 15px;">Natural Killer (NK) cells eliminate virally infected cells and tumor cells primarily by releasing:
-                    <br>A. Histamine and heparin
-                    <br>B. Perforins and granzymes
-                    <br>C. Complement factors C3a and C5a
-                    <br>D. Interleukin-1 and pyrogens
-                </li>
-                <li style="margin-bottom: 15px;">Which of the following is NOT one of the classic cardinal signs of local inflammation?
-                    <br>A. Rubor (redness)
-                    <br>B. Tumor (swelling)
-                    <br>C. Calor (heat)
-                    <br>D. Pallor (paleness)
-                </li>
-                <li style="margin-bottom: 15px;">During inflammation, histamine release causes:
-                    <br>A. Vasoconstriction and decreased vascular permeability
-                    <br>B. Vasodilation and increased capillary permeability
-                    <br>C. Platelet destruction and bleeding
-                    <br>D. Complete inhibition of neutrophil emigration
-                </li>
-                <li style="margin-bottom: 15px;">The movement of leukocytes squeezing through adjacent endothelial cells of capillary walls is termed:
-                    <br>A. Chemotaxis
-                    <br>B. Diapedesis (extravasation)
-                    <br>C. Margination
-                    <br>D. Opsonization
-                </li>
-                <li style="margin-bottom: 15px;">The chemical signaling process directing circulating leukocytes toward high concentrations of inflammatory mediators is:
-                    <br>A. Phagocytosis
-                    <br>B. Chemotaxis
-                    <br>C. Saltation
-                    <br>D. Hemolysis
-                </li>
-                <li style="margin-bottom: 15px;">Coating a microbial pathogen with complement proteins or antibodies to enhance phagocytic binding is called:
-                    <br>A. Neutralization
-                    <br>B. Opsonization
-                    <br>C. Agglutination
-                    <br>D. Apoptosis
-                </li>
-                <li style="margin-bottom: 15px;">Interferons are antiviral cytokines predominantly secreted by:
-                    <br>A. Erythrocytes facing hemolysis
-                    <br>B. Cells infected with viruses to protect adjacent uninfected cells
-                    <br>C. Bacteria undergoing binary fission
-                    <br>D. Sebaceous glands in dermis
-                </li>
-                <li style="margin-bottom: 15px;">The terminal event of the complement cascade activation creates a cytolytic pore known as the:
-                    <br>A. Major Histocompatibility Complex
-                    <br>B. Membrane Attack Complex (MAC)
-                    <br>C. Germinal ring
-                    <br>D. Fibrin meshwork
-                </li>
-                <li style="margin-bottom: 15px;">Systemic fever is induced when endogenous pyrogens like Interleukin-1 (IL-1) act upon the:
-                    <br>A. Medulla oblongata
-                    <br>B. Hypothalamus
-                    <br>C. Thalamus
-                    <br>D. Adrenal cortex
-                </li>
-                <li style="margin-bottom: 15px;">Substances that trigger a specific adaptive immune response by interacting with lymphocyte receptors are called:
-                    <br>A. Haptens
-                    <br>B. Antigens
-                    <br>C. Histamines
-                    <br>D. Perforins
-                </li>
-                <li style="margin-bottom: 15px;">Small, incomplete molecules that are not antigenic by themselves but become immunogenic when bound to carrier proteins are:
-                    <br>A. Epitopes
-                    <br>B. Haptens
-                    <br>C. Chemokines
-                    <br>D. Cytokines
-                </li>
-                <li style="margin-bottom: 15px;">MHC Class I molecules are expressed on the surface of:
-                    <br>A. Nucleated human cells
-                    <br>B. Mature erythrocytes only
-                    <br>C. Antigen-presenting cells exclusively
-                    <br>D. Platelets only
-                </li>
-                <li style="margin-bottom: 15px;">MHC Class II molecules are recognized specifically by the coreceptors of:
-                    <br>A. CD8+ Cytotoxic T cells
-                    <br>B. CD4+ Helper T cells
-                    <br>C. Natural Killer cells
-                    <br>D. Neutrophils
-                </li>
-                <li style="margin-bottom: 15px;">Which cells function as professional antigen-presenting cells (APCs)?
-                    <br>A. Erythrocytes, platelets, and fibroblasts
-                    <br>B. Dendritic cells, macrophages, and B cells
-                    <br>C. Neutrophils, basophils, and mast cells
-                    <br>D. Eosinophils and mature myocytes
-                </li>
-                <li style="margin-bottom: 15px;">Cytotoxic T cells destroy target cells displaying foreign antigen bound to MHC Class I by releasing:
-                    <br>A. Histamine and heparin
-                    <br>B. Perforin and granzymes
-                    <br>C. Immunoglobulins and fibrinogen
-                    <br>D. Surfactant and mucus
-                </li>
-                <li style="margin-bottom: 15px;">Differentiated effector B cells that actively synthesize and secrete large volumes of antibodies are:
-                    <br>A. Reticulocytes
-                    <br>B. Plasma cells
-                    <br>C. Natural Killer cells
-                    <br>D. Memory T cells
-                </li>
-                <li style="margin-bottom: 15px;">Which antibody class is a pentamer with 10 antigen-binding sites and serves as the primary antibody produced during an initial immune response?
-                    <br>A. IgG
-                    <br>B. IgA
-                    <br>C. IgM
-                    <br>D. IgE
-                </li>
-                <li style="margin-bottom: 15px;">Which antibody class is the most abundant in plasma and crosses the placenta to provide passive immunity to a fetus?
-                    <br>A. IgG
-                    <br>B. IgM
-                    <br>C. IgD
-                    <br>D. IgE
-                </li>
-                <li style="margin-bottom: 15px;">Which antibody class is predominantly found in secretions such as tears, saliva, colostrum, and mucus?
-                    <br>A. IgA
-                    <br>B. IgD
-                    <br>C. IgE
-                    <br>D. IgM
-                </li>
-                <li style="margin-bottom: 15px;">Which antibody class binds via its Fc region to mast cells and basophils, mediating allergic reactions and defense against parasites?
-                    <br>A. IgG
-                    <br>B. IgE
-                    <br>C. IgA
-                    <br>D. IgM
-                </li>
-                <li style="margin-bottom: 15px;">Acquiring lifelong protective immunity after recovering from a natural measles infection is classified as:
-                    <br>A. Artificially acquired active immunity
-                    <br>B. Naturally acquired active immunity
-                    <br>C. Artificially acquired passive immunity
-                    <br>D. Naturally acquired passive immunity
-                </li>
-                <li style="margin-bottom: 15px;">The transfer of maternal antibodies to an infant via breast milk confers:
-                    <br>A. Naturally acquired active immunity
-                    <br>B. Artificially acquired active immunity
-                    <br>C. Naturally acquired passive immunity
-                    <br>D. Artificially acquired passive immunity
-                </li>
-            </ol>
-        </section>
+    <div class="quiz-stage" id="quiz-stage">
+        <div class="q-meta">
+            <span id="badge-system">Lymphatic System</span>
+            <span id="badge-status">In Progress</span>
+        </div>
 
-        <section aria-labelledby="part2-anat" style="margin-top: 30px;">
-            <h2 id="part2-anat" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">Part II: Anatomical Identification &amp; Histology Matching (51–75)</h2>
-            <p style="color: #94a3b8;">Identify each structure, regional checkpoint, or histological marker described below:</p>
-            <ol start="51" style="padding-left: 20px; color: #cbd5e1;">
-                <li style="margin-bottom: 15px;">Identify the dilated sac situated anterior to lumbar vertebrae L1–L2 that receives lymph from lumbar and intestinal trunks: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the large duct that ascends through the posterior mediastinum, passes through the aortic hiatus of the diaphragm, and drains into the left subclavian junction: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the short lymphatic vessel receiving lymph from the right upper quadrant of the body: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the superficial lymph node cluster located in the lateral neck along the sternocleidomastoid muscle: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the regional lymph node cluster situated in the axilla that receives lymph from the upper limb and mammary gland: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the regional lymph node cluster located in the groin along the femoral vessels: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the tonsils embedded in the posterior wall of the nasopharynx: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the paired tonsils located in the lateral walls of the oropharynx between the palatoglossal and palatopharyngeal arches: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the lymphoid aggregates situated at the posterior base of the tongue: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the specific outer dense irregular connective tissue surrounding a lymph node: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the connective tissue partitions that extend inward from the capsule into the interior of a lymph node: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the lymphatic sinus located directly underneath the outer capsule of a lymph node: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the pale core within a lymphoid nodule containing proliferating B lymphocytes: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the inner region of a lymph node consisting of branching medullary cords and medullary sinuses: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the indented concavity on a lymph node or spleen where blood vessels and efferent vessels exit: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the splenic tissue compartment comprising white blood cells and germinal centers encircling central arterioles: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the splenic tissue compartment composed of venous sinuses and splenic cords (cords of Billroth): [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the artery that branches from the celiac trunk to vascularize the spleen: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the vein draining filtered blood away from the spleen toward the hepatic portal system: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Name the connective tissue septa that divide the thymus gland into distinct lobules: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the darker, outer peripheral zone of a thymic lobule containing densely packed thymocytes: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the paler central zone of a thymic lobule containing epithelial reticular cells and Hassall's corpuscles: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Provide the complete anatomical phrase represented by the acronym MALT: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the prominent lymphoid nodules located within the mucosal and submucosal walls of the distal ileum: [ __________________________________ ]</li>
-                <li style="margin-bottom: 15px;">Identify the blind-ended tubular pouch rich in lymphoid follicles attached to the cecum: [ __________________________________ ]</li>
-            </ol>
-        </section>
+        <div class="q-text" id="q-text">Loading prompt...</div>
 
-        <section aria-labelledby="part3-fillin" style="margin-top: 30px;">
-            <h2 id="part3-fillin" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">Part III: Systemic Routing, Pathways &amp; Fill-in-the-Blank (76–85)</h2>
-            <p style="color: #94a3b8;">Fill in the precise anatomical vessel, trunk, node group, or vascular insertion site:</p>
-            <ol start="76" style="padding-left: 20px; color: #cbd5e1;">
-                <li style="margin-bottom: 15px;">Interstitial fluid collected from the right anterior forearm drains into the axillary nodes, enters the right subclavian trunk, flows through the ________________________ duct, and empties into the junction of the right internal jugular vein and right subclavian vein.</li>
-                <li style="margin-bottom: 15px;">Lymph originating in the left lower leg passes through popliteal and inguinal nodes, travels up the left lumbar trunk, collects in the ________________________, ascends the thoracic duct, and empties into the left internal jugular and subclavian venous junction.</li>
-                <li style="margin-bottom: 15px;">Lymph draining from the lower right extremity empties into the venous circulation via the ________________________ duct (Right lymphatic duct OR Thoracic duct).</li>
-                <li style="margin-bottom: 15px;">The two major trunks that converge to deliver lower-body lymph directly into the cisterna chyli are the right and left ________________________ trunks.</li>
-                <li style="margin-bottom: 15px;">The unpaired lymphatic trunk that delivers lipid-rich chyle from the stomach and intestines into the cisterna chyli is the ________________________ trunk.</li>
-                <li style="margin-bottom: 15px;">Within a lymph node, lymph passes from afferent vessels into the subcapsular sinus, percolates through ________________________ sinuses in the cortex, traverses medullary sinuses, and exits via efferent vessels.</li>
-                <li style="margin-bottom: 15px;">The primary lymphoid organs where lymphocytes become immunocompetent are the red bone marrow and the ________________________.</li>
-                <li style="margin-bottom: 15px;">The splenic artery enters the spleen and branches into trabecular arteries, which give off ________________________ arterioles surrounded by white pulp.</li>
-                <li style="margin-bottom: 15px;">T-cell receptor activation requires the simultaneous recognition of a foreign peptide bound to a host ________________________ molecule.</li>
-                <li style="margin-bottom: 15px;">The variable regions of an antibody molecule form the specific ________________________-binding sites that recognize antigenic determinants.</li>
-            </ol>
-        </section>
+        <div class="options-grid" id="options-grid" role="group" aria-label="Answer options"></div>
 
-        <section aria-labelledby="part4-clinical" style="margin-top: 30px;">
-            <h2 id="part4-clinical" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">Part IV: Applied Physiology &amp; Clinical Scenarios (86–100)</h2>
-            <ol start="86" style="padding-left: 20px; color: #cbd5e1;">
-                <li style="margin-bottom: 15px;">A 52-year-old female undergoes a modified radical mastectomy with complete axillary lymph node dissection for invasive ductal carcinoma. Six months later, she presents with non-pitting edema of the ipsilateral arm. Explain the specific hydrodynamic cause of this swelling.</li>
-                <li style="margin-bottom: 15px;">Following an unrestrained motor vehicle collision, a driver experiences blunt impact to the left hypochondriac region. Emergency ultrasound reveals fluid accumulation in the peritoneal cavity, and blood pressure drops to 78/48 mmHg. Why is a ruptured spleen capable of producing rapid hypovolemic shock?</li>
-                <li style="margin-bottom: 15px;">A child is born with DiGeorge syndrome, an embryological defect resulting in complete thymic aplasia. Which specific arm of the adaptive immune system is completely crippled, and why are cell-mediated responses absent?</li>
-                <li style="margin-bottom: 15px;">Why does splenomegaly (enlargement of the spleen) frequently accompany severe hemolytic anemia?</li>
-                <li style="margin-bottom: 15px;">A patient presents with acute bacterial pharyngitis and painful, palpable swellings beneath the angle of the jaw. What cellular events are occurring within these cervical lymph nodes to cause lymphadenopathy?</li>
-                <li style="margin-bottom: 15px;">How do the overlapping endothelial minivalves of lymphatic capillaries prevent the backward leakage of lymph into the interstitial space when interstitial hydrostatic pressure decreases?</li>
-                <li style="margin-bottom: 15px;">During an acute anaphylactic reaction, widespread mast cell degranulation releases massive quantities of histamine into systemic circulation. What effect does this have on total peripheral resistance and arterial blood pressure?</li>
-                <li style="margin-bottom: 15px;">Why does injection of preformed antivenom (antibodies against rattlesnake venom) confer immediate protection but fail to produce long-term immunological memory?</li>
-                <li style="margin-bottom: 15px;">Human Immunodeficiency Virus (HIV) selectively targets and destroys CD4+ T helper cells. Why does the progressive decline of CD4+ T cells impair both cell-mediated and humoral adaptive immunity?</li>
-                <li style="margin-bottom: 15px;">Explain why an individual with an intact spleen has a substantially higher survival rate against encapsulated bacteremia (such as <em>Streptococcus pneumoniae</em>) compared to an asplenic individual.</li>
-                <li style="margin-bottom: 15px;">A pathology report notes metastatic carcinoma cells within the subcapsular sinus of a sentinel lymph node. Trace the microarchitectural route these tumor cells took to enter this sinus from the primary tumor bed.</li>
-                <li style="margin-bottom: 15px;">Why does chronic protein malnutrition (hypoalbuminemia) cause peripheral edema, and why can the lymphatic system not fully compensate for this fluid accumulation?</li>
-                <li style="margin-bottom: 15px;">Contrast the immunological mechanism and primary cellular players involved in positive selection versus negative selection during T cell maturation in the thymus.</li>
-                <li style="margin-bottom: 15px;">Explain why secondary exposure to a viral pathogen elicits a faster, higher-titer IgG response compared to the initial primary exposure.</li>
-                <li style="margin-bottom: 15px;">In filariasis (elephantiasis), parasitic roundworms lodge in inguinal lymphatic collecting vessels. Describe the physical mechanism leading to extreme lower extremity hypertrophy.</li>
-            </ol>
-        </section>
-    </main>
+        <div class="feedback-card" id="feedback-card" role="alert"></div>
 
-    <footer style="margin-top: 40px; background: #1a222d; padding: 20px; border-left: 4px solid #38bdf8; border-radius: 4px;" aria-labelledby="sec-key">
-        <h2 id="sec-key" style="color: #38bdf8; margin-top: 0;">Comprehensive Instructor Answer Key</h2>
-        <details>
-            <summary style="font-weight: bold; cursor: pointer; color: #38bdf8;">Click to Expand Complete Answer Key (Questions 1–100)</summary>
-            <div style="margin-top: 15px; color: #cbd5e1;">
-                <h3 style="color: #7dd3fc;">Part I: Multiple Choice Answers (1–50)</h3>
-                <p>
-                    1. B | 2. B | 3. C | 4. B | 5. A | 6. B | 7. C | 8. D | 9. B | 10. B<br>
-                    11. A | 12. B | 13. B | 14. B | 15. B | 16. C | 17. B | 18. B | 19. B | 20. A<br>
-                    21. C | 22. B | 23. C | 24. A | 25. B | 26. B | 27. C | 28. B | 29. B | 30. D<br>
-                    31. B | 32. B | 33. B | 34. B | 35. B | 36. B | 37. B | 38. B | 39. B | 40. A<br>
-                    41. B | 42. B | 43. B | 44. B | 45. C | 46. A | 47. A | 48. B | 49. B | 50. C
-                </p>
+        <button class="btn-next" id="btn-next">Next Item &rarr;</button>
+    </div>
 
-                <h3 style="color: #7dd3fc;">Part II: Anatomical Identification Answers (51–75)</h3>
-                <ol start="51">
-                    <li>Cisterna chyli</li>
-                    <li>Thoracic duct</li>
-                    <li>Right lymphatic duct</li>
-                    <li>Cervical lymph nodes</li>
-                    <li>Axillary lymph nodes</li>
-                    <li>Inguinal lymph nodes</li>
-                    <li>Pharyngeal tonsils (adenoids)</li>
-                    <li>Palatine tonsils</li>
-                    <li>Lingual tonsils</li>
-                    <li>Fibrous capsule</li>
-                    <li>Trabeculae</li>
-                    <li>Subcapsular sinus</li>
-                    <li>Germinal center</li>
-                    <li>Medulla</li>
-                    <li>Hilum</li>
-                    <li>White pulp</li>
-                    <li>Red pulp</li>
-                    <li>Splenic artery</li>
-                    <li>Splenic vein</li>
-                    <li>Connective tissue septa (trabeculae)</li>
-                    <li>Thymic cortex</li>
-                    <li>Thymic medulla</li>
-                    <li>Mucosa-Associated Lymphoid Tissue</li>
-                    <li>Peyer's patches</li>
-                    <li>Vermiform appendix</li>
-                </ol>
-
-                <h3 style="color: #7dd3fc;">Part III: Systemic Routing &amp; Pathways Answers (76–85)</h3>
-                <ol start="76">
-                    <li>Right lymphatic</li>
-                    <li>Cisterna chyli</li>
-                    <li>Thoracic duct</li>
-                    <li>Lumbar</li>
-                    <li>Intestinal</li>
-                    <li>Trabecular (cortical)</li>
-                    <li>Thymus (or thymus gland)</li>
-                    <li>Central</li>
-                    <li>MHC (Major Histocompatibility Complex)</li>
-                    <li>Antigen</li>
-                </ol>
-
-                <h3 style="color: #7dd3fc;">Part IV: Applied Physiology &amp; Clinical Answers (86–100)</h3>
-                <ol start="86">
-                    <li><strong>Lymphedema:</strong> The lymphatic system is responsible for returning approximately 2–4 L/day of filtered fluid and leaked plasma proteins from the interstitial space back to the blood. Surgical excision of axillary lymph nodes and severed collecting ducts permanently disrupts drainage channels, causing high-protein fluid to pool in the interstitial space of the ipsilateral arm.</li>
-                    <li><strong>Splenic Rupture:</strong> The spleen receives a very high volume of blood directly from the celiac trunk via the large splenic artery. Because the splenic parenchyma consists of delicate, highly vascular red pulp sinusoids enclosed by a thin, fragile capsule, lacerations cause uncontrolled profuse intraperitoneal bleeding, rapidly depleting blood volume and inducing hypovolemic shock.</li>
-                    <li><strong>DiGeorge Syndrome:</strong> T lymphocyte precursors travel from the red bone marrow to the thymus to undergo immunocompetence and receptor rearrangement. Without a thymus, immature thymocytes cannot develop into functional helper (CD4+) or cytotoxic (CD8+) T cells, eliminating cell-mediated immunity entirely.</li>
-                    <li><strong>Splenomegaly in Hemolytic Anemia:</strong> The red pulp macrophages must phagocytose and break down massive quantities of damaged and fragmented erythrocytes. The high metabolic workload, macrophage proliferation, and congestion of venous sinusoids lead to organ hypertrophy.</li>
-                    <li><strong>Lymphadenopathy:</strong> Foreign antigens in the pharynx enter afferent lymphatic vessels and reach cervical nodes. Clonal selection occurs: antigen-specific B cells proliferate in germinal centers, T cells expand in the paracortex, and recruited phagocytes infiltrate the sinuses, causing the node to swell and stretch its capsule.</li>
-                    <li><strong>Capillary Minivalves:</strong> When interstitial hydrostatic pressure exceeds lymph capillary internal pressure, the overlapping endothelial edges are pushed open, allowing fluid entry. When interstitial pressure drops or internal lymph pressure rises, the overlapping edges are pressed flat against one another, closing the lumen and preventing backflow.</li>
-                    <li><strong>Anaphylactic Shock:</strong> Systemic histamine causes widespread arteriolar vasodilation and extreme venular permeability. Fluid shifts rapidly from vascular compartments into the interstitium, causing a catastrophic drop in total peripheral resistance, dramatic drop in venous return, and severe arterial hypotension.</li>
-                    <li><strong>Passive Immunity:</strong> Antivenom supplies exogenous antibodies that neutralize circulating toxin molecules immediately. However, because the recipient’s own B and T cells were not activated and did not undergo clonal expansion, no memory B or T cells are produced; protection vanishes once the antibodies degrade.</li>
-                    <li><strong>HIV and CD4+ Cells:</strong> Helper T cells (CD4+) are the master coordinators of adaptive immunity. They secrete cytokines required to fully activate cytotoxic T cells (cell-mediated branch) and activate B cells to undergo class-switching and high-affinity antibody secretion (humoral branch). Losing CD4+ cells collapses both branches.</li>
-                    <li><strong>Splenic Filtration of Encapsulated Bacteria:</strong> The spleen's open circulation allows splenic macrophages and resident B cells in the marginal zone/white pulp to recognize, opsonize, and phagocytose polysaccharide-encapsulated bacteria that avoid ordinary phagocytosis in general circulation. Asplenic patients lack this specialized filtration bed and have impaired IgM responses.</li>
-                    <li><strong>Sentinel Node Infiltration:</strong> Tumor cells detach from the primary tumor bed, penetrate the permeable endothelial minivalves of initial lymphatic capillaries, travel through collecting lymphatic vessels and afferent lymphatic vessels, and penetrate through the capsule into the subcapsular sinus of the first draining (sentinel) lymph node.</li>
-                    <li><strong>Hypoalbuminemia:</strong> Low plasma albumin reduces capillary colloid osmotic pressure ($\pi_c$), which diminishes the inward reabsorption force at venous ends of capillary beds. As a result, net filtration significantly outpaces maximum lymphatic return capacity, producing widespread generalized interstitial edema (ascites/anasarca).</li>
-                    <li><strong>Thymic Selection:</strong> Positive selection occurs in the thymic cortex, where thymocytes must recognize host MHC molecules with moderate affinity (promotes self-MHC restriction; non-binding cells die via apoptosis). Negative selection occurs in the medulla/corticomedullary junction, where thymocytes binding self-antigens with high affinity are deleted to prevent autoimmunity (establishing self-tolerance).</li>
-                    <li><strong>Secondary Immune Response:</strong> Primary exposure establishes long-lived memory B cells and memory T cells. Upon re-exposure, these memory clones do not require prolonged initial activation; they immediately proliferate and differentiate into IgG-secreting plasma cells, producing an exponential rise in antibody titer within hours to days with higher antigen-binding affinity.</li>
-                    <li><strong>Filariasis (Elephantiasis):</strong> Adult parasitic worms physically obstruct inguinal and pelvic collecting lymphatic vessels and induce intense chronic inflammatory fibrosis. Lymphatic return from the lower limbs is blocked, producing chronic pooling of protein-rich lymph, severe fibroblast activation, excess collagen deposition, and massive subcutaneous tissue hypertrophy.</li>
-                </ol>
-            </div>
-        </details>
-    </footer>
+    <div class="mastery-screen" id="mastery-screen">
+        <div class="mastery-badge">&#127942;</div>
+        <h2 style="color: var(--accent); margin-bottom: 8px;">Lymphatics Module Fully Mastered!</h2>
+        <p style="color: var(--text-muted); max-width: 500px; margin: auto;">
+            Every single question in this bank was answered correctly. You have met the prerequisite criteria to unlock the <strong>Respiratory System</strong> module.
+        </p>
+        <button class="btn-reset" onclick="initEngine()">Restart Module</button>
+    </div>
 </div>
+
+<script>
+/**
+ * 100-Question Mastery Engine Data Source
+ * Aligned with OpenStax Anatomy and Physiology 2e (Chapter 21)
+ */
+const QUESTION_BANK = [
+    {
+        q: "Lymph fluid is predominantly derived from which physiological fluid compartment?",
+        opts: ["Intracellular fluid", "Interstitial fluid", "Cerebrospinal fluid", "Endolymph"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Interstitial fluid that exits blood capillaries and is not reabsorbed enters the lymphatic capillaries to become lymph."
+    },
+    {
+        q: "Which structural feature allows lymphatic capillaries to absorb large proteins, interstitial debris, and cellular fragments?",
+        opts: ["Continuous tight junctions and thick basement membranes", "Overlapping endothelial flap-like minivalves anchored by collagen filaments", "A muscular tunica media", "Fenestrations with negatively charged filtration diaphragms"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Endothelial flaps anchored by collagen fibers pull open when interstitial pressure rises, forming one-way minivalves."
+    },
+    {
+        q: "What are the specialized lymphatic capillaries in the small intestine that absorb dietary lipids?",
+        opts: ["Chylomicrons", "Sinusoids", "Lacteals", "Peyer's patches"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Lacteals are specialized lymphatic capillaries in intestinal villi critical for dietary lipid absorption."
+    },
+    {
+        q: "Milky, lipid-rich lymph collected from the digestive tract is known as:",
+        opts: ["Chyme", "Chyle", "Colostrum", "Transudate"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The lipid-rich lymphatic fluid collected by lacteals is termed chyle."
+    },
+    {
+        q: "The thoracic duct originates in the abdomen from a dilated sac termed the:",
+        opts: ["Cisterna chyli", "Splenic hilum", "Aortic hiatus", "Splanchnic reservoir"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The cisterna chyli is the dilated sac anterior to lumbar vertebrae L1-L2 serving as the thoracic duct's origin."
+    },
+    {
+        q: "The right lymphatic duct empties lymph into the venous circulation at the junction of the:",
+        opts: ["Left internal jugular and left subclavian veins", "Right internal jugular and right subclavian veins", "Superior vena cava and azygos vein", "Right brachiocephalic and right external jugular veins"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The right lymphatic duct drains into the right internal jugular and right subclavian venous junction."
+    },
+    {
+        q: "Which of the following anatomical regions drains into the thoracic duct rather than the right lymphatic duct?",
+        opts: ["Right pectoral region", "Right side of the head and neck", "Left lower extremity", "Right upper limb"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: The thoracic duct drains the entire lower half of the body (both legs) and the left upper quadrant."
+    },
+    {
+        q: "Which physiological force does NOT propel lymph forward through collecting vessels?",
+        opts: ["Skeletal muscle pump contractions", "Respiratory pressure fluctuations in the thorax", "Rhythmic smooth muscle contractions in vessel walls", "Hydrostatic pressure produced by cardiac ventricular systole"],
+        ans: 3,
+        exp: "OpenStax Ch 21.1: The lymphatic system lacks a central pump; it relies on skeletal muscle pumps, respiratory pumps, and intrinsic valves."
+    },
+    {
+        q: "Which organ is classified as a primary lymphoid organ?",
+        opts: ["Spleen", "Red bone marrow", "Palatine tonsil", "Lymph node"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Primary lymphoid organs are sites of lymphocyte formation and maturation: red bone marrow and thymus."
+    },
+    {
+        q: "Where do B lymphocytes differentiate and complete their immunocompetence?",
+        opts: ["Thymic medulla", "Red bone marrow", "Germinal centers of lymph nodes", "Splenic white pulp"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: B cells develop and undergo maturation directly within red bone marrow."
+    },
+    {
+        q: "Positive selection of maturing T lymphocytes occurs in the:",
+        opts: ["Thymic cortex", "Thymic medulla", "Hassall's corpuscles", "Connective tissue septa"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Positive selection (testing self-MHC recognition) occurs in the thymic cortex."
+    },
+    {
+        q: "What is the primary physiological function of the blood-thymus barrier?",
+        opts: ["Prevent mature T cells from reaching venous circulation", "Prevent circulating systemic antigens from prematurely encountering developing T cells", "Filter erythrocyte debris from thymic cords", "Deliver thymic hormones to the spleen"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The blood-thymus barrier isolates developing T cells from blood-borne foreign antigens during selection."
+    },
+    {
+        q: "What structural change occurs to the thymus gland beginning after puberty?",
+        opts: ["Hyperplasia of cortical thymocytes", "Infiltration by fibrous connective tissue and adipose (involution)", "Calcification of the external fibrous capsule", "Expansion of Hassall's corpuscles into the cortex"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The thymus undergoes involution with age, gradually replaced by fibrous tissue and adipose."
+    },
+    {
+        q: "Lymph enters a lymph node via which vessels?",
+        opts: ["Efferent lymphatic vessels", "Afferent lymphatic vessels", "Splenic sinusoids", "Central arterioles"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Afferent vessels bring lymph into the subcapsular sinus; efferent vessels exit at the hilum."
+    },
+    {
+        q: "Why is lymph transit through a lymph node naturally slow?",
+        opts: ["Efferent vessels outnumber afferent vessels", "Afferent vessels outnumber efferent vessels, creating internal flow resistance", "Valves completely halt fluid flow inside sinuses", "Lymph nodes lack internal sinus cavities"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Several afferent vessels lead in, but only one or two efferent vessels exit, slowing flow for immune filtration."
+    },
+    {
+        q: "The pale core of an activated lymphoid follicle where B cells clonally proliferate is the:",
+        opts: ["Paracortex", "Medullary cord", "Germinal center", "Trabecular sinus"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Germinal centers house dividing B cells and follicular dendritic cells."
+    },
+    {
+        q: "The paracortex (inner cortex) of a lymph node is populated primarily by:",
+        opts: ["Plasma cells", "T lymphocytes", "Erythrocytes", "Senescent platelets"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The deep cortex (paracortex) consists predominantly of resident T lymphocytes."
+    },
+    {
+        q: "Which region of the spleen removes old, rigid erythrocytes and recycles hemoglobin?",
+        opts: ["White pulp", "Red pulp", "Central arteriole mantle", "Peyer's cords"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Splenic red pulp houses macrophages that phagocytose senescent red blood cells and recycle iron."
+    },
+    {
+        q: "Splenic white pulp consists primarily of:",
+        opts: ["Venous sinusoids filled with RBCs", "Lymphoid tissue surrounding central arterioles", "Reticular cords devoid of leukocytes", "Trabecular veins"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: White pulp consists of periarteriolar lymphoid sheaths (PALS) surrounding central arterioles."
+    },
+    {
+        q: "Splenic cords rich in macrophages, plasma cells, and reticular fibers are called:",
+        opts: ["Cords of Billroth", "Hassall's corpuscles", "Peyer's tracts", "Purkinje cords"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Splenic cords of Billroth run between the venous sinusoids in the red pulp."
+    },
+    {
+        q: "Which tonsils reside in the lateral posterolateral oropharynx between the fauces?",
+        opts: ["Pharyngeal tonsils", "Lingual tonsils", "Palatine tonsils", "Tubal tonsils"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Palatine tonsils sit lateral in the oropharynx and are the most common site of clinical tonsillitis."
+    },
+    {
+        q: "An enlarged pharyngeal tonsil located in the nasopharynx is known as:",
+        opts: ["Adenoids", "Peyer's nodule", "Lingual hypertrophy", "Bubo"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: An infected or swollen pharyngeal tonsil is clinically termed an adenoid."
+    },
+    {
+        q: "Peyer's patches are characteristic lymphoid aggregations in the submucosa of the:",
+        opts: ["Duodenum", "Jejunum", "Ileum", "Stomach rugae"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Peyer's patches are prominent aggregated lymphoid follicles located in the distal ileum."
+    },
+    {
+        q: "Which blind-ended pouch rich in lymphoid follicles attaches to the cecum?",
+        opts: ["Vermiform appendix", "Splenic flexure", "Cisterna chyli", "Meckel's diverticulum"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The vermiform appendix is an unencapsulated lymphoid-rich appendage on the cecum."
+    },
+    {
+        q: "Which of the following is an anatomical/chemical surface barrier of innate immunity?",
+        opts: ["Cytotoxic T cells", "Keratinized stratified squamous epithelium and sebum", "Plasma cells", "Immunoglobulin G"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Intact skin, keratin, and acidic sebum constitute external physical and chemical barriers."
+    },
+    {
+        q: "Which enzyme present in tears, saliva, and mucus degrades bacterial peptidoglycan cell walls?",
+        opts: ["Pepsin", "Lysozyme", "Peroxidase", "Amylase"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Lysozyme enzymatically lyses bacterial cell walls on mucosal surfaces."
+    },
+    {
+        q: "Which leukocyte is typically the first phagocytic responder recruited to acute bacterial infection?",
+        opts: ["Eosinophil", "Basophil", "Neutrophil", "Monocyte"],
+        ans: 2,
+        exp: "OpenStax Ch 21.2: Neutrophils are early phagocytes that arrive first via chemotaxis during acute inflammation."
+    },
+    {
+        q: "Fixed macrophages lining the sinusoids of the liver are termed:",
+        opts: ["Microglia", "Kupffer cells", "Langerhans cells", "Alveolar dust cells"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Kupffer cells (stellate macrophages) are fixed reticuloendothelial cells in hepatic sinusoids."
+    },
+    {
+        q: "Natural Killer (NK) cells induce apoptosis in virus-infected and cancerous cells by releasing:",
+        opts: ["Histamine and heparin", "Perforins and granzymes", "Complement C3a", "Pyrogens"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: NK cells release perforins to form membrane pores, allowing granzymes to enter and trigger apoptosis."
+    },
+    {
+        q: "Which of the following is NOT one of the cardinal signs of local inflammation?",
+        opts: ["Rubor (redness)", "Tumor (swelling)", "Calor (heat)", "Pallor (paleness)"],
+        ans: 3,
+        exp: "OpenStax Ch 21.2: The cardinal signs are redness (rubor), heat (calor), swelling (tumor), and pain (dolor)."
+    },
+    {
+        q: "Histamine release from mast cells during tissue injury causes:",
+        opts: ["Arteriolar constriction and decreased capillary permeability", "Local vasodilation and increased vascular permeability", "Destruction of bone marrow", "Immediate inhibition of diapedesis"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Histamine dilates local arterioles and increases capillary permeability to deliver immune cells."
+    },
+    {
+        q: "The process of leukocytes squeezing through capillary endothelial junctions is termed:",
+        opts: ["Chemotaxis", "Diapedesis (extravasation)", "Margination", "Opsonization"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Diapedesis is the physical transit of leukocytes through endothelial gaps into tissue."
+    },
+    {
+        q: "Unidirectional leukocyte migration toward high concentrations of inflammatory mediators is:",
+        opts: ["Chemotaxis", "Agglutination", "Hemolysis", "Saltation"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: Chemotaxis is directed cellular movement up a chemical concentration gradient."
+    },
+    {
+        q: "Coating a pathogen with complement fragments or antibodies to accelerate phagocytosis is:",
+        opts: ["Neutralization", "Opsonization", "Agglutination", "Precipitation"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Opsonization flags pathogens for rapid binding by macrophage and neutrophil receptors."
+    },
+    {
+        q: "Interferons are antiviral cytokines released primarily by:",
+        opts: ["Erythrocytes", "Virus-infected cells to protect neighboring uninfected cells", "Bacteria undergoing fission", "Sebaceous glands"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Interferons alert neighboring uninfected cells to synthesize antiviral proteins that block viral replication."
+    },
+    {
+        q: "The multi-protein cylindrical pore assembled during complement cascade activation is the:",
+        opts: ["Major Histocompatibility Complex", "Membrane Attack Complex (MAC)", "T-cell receptor", "Perforin cap"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Complement factors C5b-C9 assemble the Membrane Attack Complex (MAC), lysing the target cell."
+    },
+    {
+        q: "Endogenous pyrogens such as Interleukin-1 (IL-1) induce fever by targeting the:",
+        opts: ["Medulla oblongata", "Hypothalamus", "Thalamus", "Cerebellum"],
+        ans: 1,
+        exp: "OpenStax Ch 21.2: Pyrogens reset the hypothalamic thermostat to elevate systemic body temperature."
+    },
+    {
+        q: "Substances capable of mobilizing the adaptive immune response are termed:",
+        opts: ["Antigens", "Haptens", "Histamines", "Interferons"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Antigens are foreign molecules that bind to specific lymphocyte and antibody receptors."
+    },
+    {
+        q: "Small, incomplete antigens that are not immunogenic unless coupled to carrier proteins are:",
+        opts: ["Haptens", "Epitopes", "Cytokines", "Agglutinins"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Haptens are small reactive molecules that require a larger protein carrier to stimulate immune responses."
+    },
+    {
+        q: "MHC Class I glycoproteins are expressed on the surfaces of:",
+        opts: ["All nucleated body cells", "Mature erythrocytes only", "Antigen-presenting cells exclusively", "Platelets exclusively"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: All nucleated human cells present endogenous peptides on surface MHC Class I molecules."
+    },
+    {
+        q: "MHC Class II proteins present exogenous antigens exclusively to:",
+        opts: ["CD8+ Cytotoxic T cells", "CD4+ Helper T cells", "Natural Killer cells", "Neutrophils"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: MHC Class II molecules present processed exogenous antigens specifically to CD4+ Helper T cells."
+    },
+    {
+        q: "Which cell types serve as professional antigen-presenting cells (APCs)?",
+        opts: ["Dendritic cells, macrophages, and B cells", "Neutrophils, basophils, and mast cells", "Erythrocytes, platelets, and myocytes", "Fibroblasts and adipocytes"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Professional APCs that present on MHC II are dendritic cells, macrophages, and B cells."
+    },
+    {
+        q: "Cytotoxic T (CD8+) cells destroy target cells by releasing:",
+        opts: ["Histamine and heparin", "Perforin and granzymes", "Antibodies and fibrinogen", "Surfactant"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: Activated cytotoxic T cells release perforins and granzymes to induce targeted apoptosis."
+    },
+    {
+        q: "Activated B lymphocytes that actively synthesize and secrete large quantities of antibodies are:",
+        opts: ["Memory T cells", "Plasma cells", "Dendritic cells", "Natural Killer cells"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: Plasma cells are differentiated effector B cells that secrete specific soluble antibodies."
+    },
+    {
+        q: "Which pentameric antibody class is synthesized first during a primary immune response?",
+        opts: ["IgG", "IgM", "IgA", "IgE"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: IgM is a pentamer with 10 binding sites released early during the primary humoral response."
+    },
+    {
+        q: "The most abundant antibody in plasma that can cross the placenta to protect a fetus is:",
+        opts: ["IgG", "IgM", "IgD", "IgE"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: IgG represents ~80% of plasma antibodies and is the only class that crosses the placental barrier."
+    },
+    {
+        q: "Which antibody dimer is found in secretions like tears, saliva, mucus, and colostrum?",
+        opts: ["IgA", "IgD", "IgE", "IgM"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Dimeric IgA protects epithelial surfaces by neutralizing pathogens in external secretions."
+    },
+    {
+        q: "Which antibody binds to mast cells and basophils, mediating allergic reactions and antiparasitic responses?",
+        opts: ["IgG", "IgE", "IgA", "IgD"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: IgE binds via its Fc stem to mast cells, triggering histamine degranulation upon cross-linking."
+    },
+    {
+        q: "Acquiring immunity from direct exposure to an active pathogen and subsequent recovery is termed:",
+        opts: ["Naturally acquired active immunity", "Artificially acquired active immunity", "Naturally acquired passive immunity", "Artificially acquired passive immunity"],
+        ans: 0,
+        exp: "OpenStax Ch 21.4: Natural infection resulting in memory cell creation is naturally acquired active immunity."
+    },
+    {
+        q: "The transfer of maternal antibodies to an infant via breast milk is an example of:",
+        opts: ["Naturally acquired active immunity", "Artificially acquired active immunity", "Naturally acquired passive immunity", "Artificially acquired passive immunity"],
+        ans: 2,
+        exp: "OpenStax Ch 21.4: Direct transfer of maternal antibodies provides temporary naturally acquired passive protection."
+    },
+    {
+        q: "The connective tissue partitions extending into the interior of a lymph node are termed:",
+        opts: ["Septa pellucida", "Trabeculae", "Cords of Billroth", "Lacteal sheaths"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Capsule extensions dividing the node into compartments are trabeculae."
+    },
+    {
+        q: "Which regional lymph nodes filter fluid collected from the head and neck?",
+        opts: ["Axillary nodes", "Cervical nodes", "Inguinal nodes", "Mesenteric nodes"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Cervical lymph nodes filter lymph draining from head and neck structures."
+    },
+    {
+        q: "Which regional lymph nodes filter fluid from the upper extremity and mammary tissue?",
+        opts: ["Popliteal nodes", "Inguinal nodes", "Axillary nodes", "Celiac nodes"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Axillary nodes intercept lymph draining from the arm, breast, and lateral thoracic wall."
+    },
+    {
+        q: "Which regional lymph nodes filter fluid from the lower extremities and external genitalia?",
+        opts: ["Inguinal nodes", "Cervical nodes", "Cubital nodes", "Tracheobronchial nodes"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Inguinal nodes in the groin filter lymph draining from the lower limbs and pelvis."
+    },
+    {
+        q: "What lymphoid structure is situated at the base of the tongue?",
+        opts: ["Palatine tonsil", "Pharyngeal tonsil", "Lingual tonsil", "Tubal tonsil"],
+        ans: 2,
+        exp: "OpenStax Ch 21.1: Lingual tonsils are lymphoid aggregations located on the posterior tongue base."
+    },
+    {
+        q: "What vascular vessel branches from the celiac trunk to provide arterial perfusion to the spleen?",
+        opts: ["Mesenteric artery", "Splenic artery", "Renal artery", "Hepatic artery"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The splenic artery branches directly from the celiac trunk into the splenic hilum."
+    },
+    {
+        q: "Venous blood filtered by the spleen exits via the splenic vein and flows into the:",
+        opts: ["Inferior vena cava directly", "Hepatic portal vein", "Azygos vein", "Renal vein"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The splenic vein joins the superior mesenteric vein to form the hepatic portal vein."
+    },
+    {
+        q: "Connective tissue partitions that segment the thymus gland are termed:",
+        opts: ["Thymic septa (trabeculae)", "Sinusoids", "Lacteals", "Valves of Kerckring"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Septa divide the thymic lobes into outer lobules."
+    },
+    {
+        q: "Hassall's (thymic) corpuscles are diagnostic concentric epithelial structures found in the:",
+        opts: ["Thymic cortex", "Thymic medulla", "Red pulp", "Germinal centers"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Hassall's corpuscles are characteristic whorled epithelial formations in the thymic medulla."
+    },
+    {
+        q: "What does the clinical acronym MALT stand for?",
+        opts: ["Myeloid-Associated Lymphoid Trunks", "Mucosa-Associated Lymphoid Tissue", "Major-Antigen Lymphocyte Target", "Microbial-Associated Leukocyte Transmission"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: MALT stands for Mucosa-Associated Lymphoid Tissue."
+    },
+    {
+        q: "Interstitial fluid from the right anterior forearm empties into the venous system via the:",
+        opts: ["Thoracic duct", "Right lymphatic duct", "Azygos vein", "Superior vena cava directly"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The right upper extremity drains via the right lymphatic duct."
+    },
+    {
+        q: "Lymph from the right lower leg ascends through the lumbar trunks and empties into the:",
+        opts: ["Right lymphatic duct", "Thoracic duct via the cisterna chyli", "Hemiazygos vein", "Inferior vena cava"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Both lower extremities drain into the cisterna chyli and ascend the thoracic duct."
+    },
+    {
+        q: "The unpaired lymphatic trunk collecting fatty lymph from digestive organs is the:",
+        opts: ["Lumbar trunk", "Intestinal trunk", "Bronchomediastinal trunk", "Subclavian trunk"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: The intestinal trunk drains chyle from the stomach, intestines, and pancreas into the cisterna chyli."
+    },
+    {
+        q: "T cells undergo negative selection to eliminate clones that:",
+        opts: ["Fail to recognize self-MHC molecules", "Bind self-antigens with high affinity", "Produce excessive antibodies", "Bind to bacterial peptidoglycan"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Negative selection deletes autoreactive T cells that bind self-peptides, establishing self-tolerance."
+    },
+    {
+        q: "The antigen-binding site of an antibody molecule is formed by the:",
+        opts: ["Constant regions of heavy chains only", "Variable regions of both heavy and light chains", "Fc stem domain", "Complement-binding hinge"],
+        ans: 1,
+        exp: "OpenStax Ch 21.3: The variable domains of one heavy and one light chain combine to form the specific antigen-binding site."
+    },
+    {
+        q: "A patient develops non-pitting arm edema following an axillary lymphadenectomy. What caused this condition?",
+        opts: ["Increased blood hydrostatic pressure", "Severed lymphatic vessels preventing interstitial protein return", "Increased plasma colloid osmotic pressure", "Severe systemic histamine release"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Removing axillary nodes and vessels severs the drainage conduit, trapping protein-rich fluid in limb tissues."
+    },
+    {
+        q: "Why does severe blunt trauma to the left hypochondriac region risk rapid hypovolemic shock?",
+        opts: ["The spleen has a rich blood supply from the splenic artery and a fragile, delicate capsule", "The cisterna chyli will rupture and flood the mediastinum", "T cells are dumped into the blood causing vasodilation", "The stomach empties acid into the pericardium"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The spleen is highly vascularized via the splenic artery and easily lacerates, causing fatal internal bleeding."
+    },
+    {
+        q: "A child with DiGeorge syndrome lacks a thymus gland. What immune deficit will be present?",
+        opts: ["Inability to produce erythrocytes", "Complete absence of cell-mediated immunity due to lack of mature T cells", "Total lack of innate physical surface barriers", "Inability to activate the complement cascade"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Thymic aplasia prevents T cell development, abolishing cell-mediated immunity."
+    },
+    {
+        q: "Why does severe hemolytic anemia lead to splenomegaly?",
+        opts: ["The red pulp macrophages work overtime to clear massive volumes of damaged RBCs", "White pulp germinal centers expand to create antibodies", "The splenic vein develops thrombi", "Lymph nodes shrink and displace fluid into the spleen"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: High erythrocyte destruction increases phagocytic workload and engorges red pulp sinusoids."
+    },
+    {
+        q: "Painful, swollen cervical lymph nodes during strep pharyngitis result primarily from:",
+        opts: ["Passive clotting of lymph inside the capsule", "Clonal proliferation of lymphocytes and influx of phagocytes", "Rupture of the thoracic duct", "Atrophy of the medullary cords"],
+        ans: 1,
+        exp: "OpenStax Ch 21.1: Lymphadenopathy reflects antigen recognition, B/T cell proliferation, and phagocytic infiltration."
+    },
+    {
+        q: "How do lymphatic endothelial minivalves prevent backflow when interstitial pressure drops?",
+        opts: ["Internal pressure pushes the overlapping endothelial edges closed", "Collagen filaments pull valves inward", "Peristalsis keeps them open", "Muscular sphincters contract at each end"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: As internal lymph pressure exceeds interstitial pressure, overlapping flap edges are pressed tight shut."
+    },
+    {
+        q: "Systemic histamine release during anaphylactic shock causes blood pressure to plummet due to:",
+        opts: ["Widespread arteriolar dilation and massive plasma loss into tissues", "Extreme renal vasoconstriction", "Heart muscle paralysis", "Immediate lysis of erythrocytes"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: Massive vasodilation drops systemic vascular resistance, and increased permeability drops venous return."
+    },
+    {
+        q: "Injecting preformed antivenom antibodies provides immediate protection but no memory because:",
+        opts: ["The host's own B and T cells did not undergo clonal expansion", "Antivenom destroys host plasma cells", "The antivenom triggers severe thymic involution", "Exogenous antibodies cannot bind toxins"],
+        ans: 0,
+        exp: "OpenStax Ch 21.4: Passive immunity supplies antibodies without engaging host lymphocytes, creating no memory cells."
+    },
+    {
+        q: "HIV destroys CD4+ T helper cells. Why does this cripple humoral immunity as well as cell-mediated immunity?",
+        opts: ["Helper T cells secrete cytokines needed to fully activate B cells and stimulate antibody class-switching", "Helper T cells produce all systemic IgG", "CD4 cells directly filter blood in the spleen", "CD4 cells synthesize complement"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: CD4+ T cells release cytokines essential for B cell proliferation and high-affinity antibody secretion."
+    },
+    {
+        q: "Why are asplenic individuals at high risk for encapsulated bacterial infections like Streptococcus pneumoniae?",
+        opts: ["Splenic macrophages and marginal zone B cells specialize in clearing encapsulated bacteria from blood", "The spleen is the sole site of neutrophil production", "The spleen produces all circulating antibodies", "T cells cannot mature without splenic hormones"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The spleen acts as a critical filter where specialized macrophages remove encapsulated blood-borne microbes."
+    },
+    {
+        q: "Metastatic breast cancer cells entering a sentinel lymph node will first appear in the:",
+        opts: ["Subcapsular sinus", "Medullary cord", "Germinal center", "Central arteriole"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Afferent vessels pierce the capsule and empty directly into the subcapsular sinus."
+    },
+    {
+        q: "Hypoalbuminemia causes edema because reduced colloid osmotic pressure:",
+        opts: ["Decreases reabsorption at the venous end, overwhelming lymphatic return capacity", "Blocks the right lymphatic duct completely", "Destroys all lymphatic capillary minivalves", "Increases blood hydrostatic pressure in arteries"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Low plasma protein lowers capillary colloid osmotic pressure; excessive filtration overwhelms lymph capacity."
+    },
+    {
+        q: "Secondary immune responses are faster and stronger than primary responses because:",
+        opts: ["Long-lived memory B and T cells respond immediately without lengthy initial clonal priming", "Antigens lose their virulence", "The thymus rapidly enlarges", "The complement cascade is bypassed entirely"],
+        ans: 0,
+        exp: "OpenStax Ch 21.4: Memory cells established during primary exposure produce rapid, high-affinity IgG titers upon re-exposure."
+    },
+    {
+        q: "In lymphatic filariasis (elephantiasis), extreme lower limb swelling is caused by:",
+        opts: ["Parasitic worms mechanically obstructing inguinal and pelvic lymph vessels", "Overactive cytotoxic T cells destroying blood vessels", "Loss of all red pulp in the spleen", "Lack of bile production"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Adult filarial worms lodge in lymphatics, blocking drainage and triggering chronic fibrosis."
+    },
+    {
+        q: "The functional tissue component of a lymphoid organ (such as the cortex and medulla of a node) is termed the:",
+        opts: ["Parenchyma", "Stroma", "Adventitia", "Peritoneum"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The parenchyma refers to the functional cellular components, whereas the stroma is the structural connective framework."
+    },
+    {
+        q: "The structural reticular connective tissue framework supporting lymphoid cells is called the:",
+        opts: ["Stroma", "Parenchyma", "Serosa", "Mucosa"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The stroma is the reticular fiber meshwork providing internal physical support."
+    },
+    {
+        q: "Which antibody is expressed on the surface of naive B cells along with monomeric IgM, functioning as an antigen receptor?",
+        opts: ["IgD", "IgE", "IgA", "Secretory component"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: IgD is co-expressed with IgM on naive B cell membranes as an antigen receptor."
+    },
+    {
+        q: "The specific site on an antigen that directly binds to an antibody or lymphocyte receptor is an:",
+        opts: ["Epitope (antigenic determinant)", "Hapten", "Fc stem", "Opsonin"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: An epitope is the exact molecular domain on an antigen bound by an antigen receptor."
+    },
+    {
+        q: "Which cells perform immune surveillance by killing stressed cells lacking surface MHC Class I molecules?",
+        opts: ["Natural Killer (NK) cells", "CD8+ Cytotoxic T cells", "Plasma cells", "Erythrocytes"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: NK cells target infected or malignant cells that evade CD8+ cells by downregulating MHC I."
+    },
+    {
+        q: "Vaccination with an attenuated pathogen induces:",
+        opts: ["Artificially acquired active immunity", "Naturally acquired active immunity", "Artificially acquired passive immunity", "Naturally acquired passive immunity"],
+        ans: 0,
+        exp: "OpenStax Ch 21.4: Vaccines stimulate host lymphocytes to create memory cells without causing severe disease."
+    },
+    {
+        q: "Injection of gamma globulin antibodies after a needle-stick exposure confers:",
+        opts: ["Artificially acquired passive immunity", "Artificially acquired active immunity", "Naturally acquired active immunity", "Naturally acquired passive immunity"],
+        ans: 0,
+        exp: "OpenStax Ch 21.4: Direct injection of donor antibodies provides immediate, short-term artificial passive immunity."
+    },
+    {
+        q: "Which cytokine, secreted by helper T cells, acts as an autocrine factor to drive T cell clonal expansion?",
+        opts: ["Interleukin-2 (IL-2)", "Histamine", "Heparin", "Perforin"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: IL-2 acts as a crucial growth factor promoting T lymphocyte proliferation."
+    },
+    {
+        q: "The process of programmed cell death used to safely eliminate infected or damaged cells is:",
+        opts: ["Apoptosis", "Necrosis", "Lysis", "Diapedesis"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: Apoptosis is orderly, programmed cell suicide that avoids triggering widespread inflammation."
+    },
+    {
+        q: "Which complement protein fragments act as anaphylatoxins, promoting histamine release from mast cells?",
+        opts: ["C3a and C5a", "C1q", "C9", "Factor B"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: C3a and C5a stimulate mast cell degranulation, enhancing vasodilation and inflammation."
+    },
+    {
+        q: "Which complement fragment acts as a potent opsonin by coating bacterial surfaces?",
+        opts: ["C3b", "C1", "C2", "C9"],
+        ans: 0,
+        exp: "OpenStax Ch 21.2: C3b coats microbial membranes, directly promoting phagocytosis by neutrophils and macrophages."
+    },
+    {
+        q: "Lymph collected from the left side of the head, left thorax, and left arm enters the:",
+        opts: ["Thoracic duct", "Right lymphatic duct", "Cisterna chyli directly", "Superior vena cava directly"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The entire left upper quadrant drains via the thoracic duct into the left venous junction."
+    },
+    {
+        q: "Which cell type in the epidermis functions as a dendritic antigen-presenting cell?",
+        opts: ["Langerhans cell", "Melanocyte", "Keratinocyte", "Merkel cell"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Langerhans cells are specialized dendritic cells resident in the epidermis."
+    },
+    {
+        q: "What is the primary immunological role of Hassall's corpuscles in the thymic medulla?",
+        opts: ["Development of regulatory T (Treg) cells for self-tolerance", "Production of blood platelets", "Destruction of old RBCs", "Synthesis of IgM"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: Medullary Hassall's corpuscles foster regulatory T cells that prevent autoimmune reactions."
+    },
+    {
+        q: "T cells interact with antigen only when presented by:",
+        opts: ["Major Histocompatibility Complex (MHC) proteins", "Free circulating antibodies", "Complement fragments", "Platelet factors"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: T-cell receptors cannot bind free antigens; they require antigen fragments displayed on host MHC molecules."
+    },
+    {
+        q: "CD8 coreceptors are present on:",
+        opts: ["Cytotoxic T cells", "Helper T cells", "B cells", "Erythrocytes"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: CD8 coreceptors identify cytotoxic T lymphocytes that interact with MHC Class I."
+    },
+    {
+        q: "CD4 coreceptors are present on:",
+        opts: ["Helper T cells", "Cytotoxic T cells", "Plasma cells", "Basophils"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: CD4 coreceptors characterize helper T lymphocytes that bind MHC Class II."
+    },
+    {
+        q: "The process whereby an activated lymphocyte rapidly divides to form identical daughter cells is:",
+        opts: ["Clonal expansion", "Opsonization", "Agglutination", "Involution"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Antigen encounter stimulates clonal expansion to create a population of effector and memory cells."
+    },
+    {
+        q: "Antibodies inactivate toxins by binding to their active sites in a mechanism called:",
+        opts: ["Neutralization", "Lysis", "Diapedesis", "Chemotaxis"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Neutralization blocks the active binding domains of viruses and bacterial exotoxins."
+    },
+    {
+        q: "Cross-linking cellular antigens into large, visible clumps by antibodies is termed:",
+        opts: ["Agglutination", "Precipitation", "Neutralization", "Opsonization"],
+        ans: 0,
+        exp: "OpenStax Ch 21.3: Agglutination involves multi-binding antibodies cross-linking foreign cells into visible clumps."
+    },
+    {
+        q: "Which organ contains both red pulp for blood clearance and white pulp for immune surveillance?",
+        opts: ["Spleen", "Thymus", "Lymph node", "Appendix"],
+        ans: 0,
+        exp: "OpenStax Ch 21.1: The spleen uniquely combines red pulp filtration and white pulp immune surveillance."
+    }
+];
+
+/**
+ * Mastery Engine State Architecture
+ */
+let masterPool = [];
+let reviewQueue = [];
+let currentItem = null;
+let currentStreak = 0;
+let masteredCount = 0;
+let totalQuestions = QUESTION_BANK.length;
+
+function initEngine() {
+    // Populate working pool with clones
+    masterPool = QUESTION_BANK.map((item, index) => ({ ...item, id: index }));
+    // Shuffle pool
+    masterPool.sort(() => Math.random() - 0.5);
+    reviewQueue = [];
+    masteredCount = 0;
+    currentStreak = 0;
+
+    document.getElementById("mastery-screen").style.display = "none";
+    document.getElementById("quiz-stage").style.display = "block";
+
+    updateHUD();
+    loadNextItem();
+}
+
+function updateHUD() {
+    document.getElementById("hud-mastered").textContent = masteredCount;
+    document.getElementById("hud-remaining").textContent = masterPool.length;
+    document.getElementById("hud-queue").textContent = reviewQueue.length;
+    document.getElementById("hud-streak").textContent = currentStreak;
+
+    const progressPct = (masteredCount / totalQuestions) * 100;
+    document.getElementById("progress-fill").style.width = `${progressPct}%`;
+}
+
+function loadNextItem() {
+    const feedbackCard = document.getElementById("feedback-card");
+    const nextBtn = document.getElementById("btn-next");
+    const optionsGrid = document.getElementById("options-grid");
+
+    feedbackCard.className = "feedback-card";
+    feedbackCard.style.display = "none";
+    feedbackCard.innerHTML = "";
+    nextBtn.style.display = "none";
+    optionsGrid.innerHTML = "";
+
+    // Victory check
+    if (masteredCount === totalQuestions) {
+        document.getElementById("quiz-stage").style.display = "none";
+        document.getElementById("mastery-screen").style.display = "block";
+        return;
+    }
+
+    // Prioritize review queue if available, otherwise take from pool
+    if (reviewQueue.length > 0 && Math.random() > 0.4) {
+        currentItem = reviewQueue.shift();
+        document.getElementById("badge-status").textContent = "Review Item";
+        document.getElementById("badge-status").style.color = "#f59e0b";
+    } else if (masterPool.length > 0) {
+        currentItem = masterPool.shift();
+        document.getElementById("badge-status").textContent = "Fresh Pool";
+        document.getElementById("badge-status").style.color = "var(--accent)";
+    } else {
+        // Only review queue remains
+        currentItem = reviewQueue.shift();
+        document.getElementById("badge-status").textContent = "Review Queue";
+        document.getElementById("badge-status").style.color = "#f59e0b";
+    }
+
+    document.getElementById("q-text").textContent = currentItem.q;
+
+    // Render options
+    currentItem.opts.forEach((optText, index) => {
+        const btn = document.createElement("button");
+        btn.className = "btn-opt";
+        btn.textContent = optText;
+        btn.setAttribute("tabindex", "0");
+        btn.onclick = () => handleSelection(index, btn);
+        optionsGrid.appendChild(btn);
+    });
+
+    updateHUD();
+}
+
+function handleSelection(selectedIndex, selectedBtn) {
+    const optionsGrid = document.getElementById("options-grid");
+    const buttons = optionsGrid.getElementsByTagName("button");
+    const feedbackCard = document.getElementById("feedback-card");
+    const nextBtn = document.getElementById("btn-next");
+
+    // Lock options
+    for (let btn of buttons) {
+        btn.disabled = true;
+    }
+
+    const isCorrect = selectedIndex === currentItem.ans;
+
+    if (isCorrect) {
+        selectedBtn.classList.add("selected-correct");
+        feedbackCard.className = "feedback-card correct";
+        feedbackCard.innerHTML = `<strong>Correct!</strong> ${currentItem.exp}`;
+        currentStreak++;
+        masteredCount++;
+    } else {
+        selectedBtn.classList.add("selected-wrong");
+        buttons[currentItem.ans].classList.add("show-correct");
+        feedbackCard.className = "feedback-card wrong";
+        feedbackCard.innerHTML = `<strong>Incorrect.</strong> ${currentItem.exp}<br><em style="font-size:0.85rem; color:#fca5a5;">(Item sent to review queue for reinforcement)</em>`;
+        currentStreak = 0;
+        // Reinsert into review queue
+        reviewQueue.push(currentItem);
+    }
+
+    nextBtn.style.display = "block";
+    nextBtn.focus();
+    updateHUD();
+}
+
+document.getElementById("btn-next").addEventListener("click", () => {
+    loadNextItem();
+});
+
+// Initialize on load
+window.onload = initEngine;
+</script>
+
+</body>
+</html>
