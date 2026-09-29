@@ -1,838 +1,320 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A&P II Mastery Review: Lymphatic, Respiratory &amp; Urinary Systems</title>
-  <style>
-    :root {
-      --primary: #004b87;
-      --primary-dark: #003057;
-      --accent: #d97706;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #cbd5e1;
-      --correct: #166534;
-      --correct-bg: #dcfce7;
-      --incorrect: #991b1b;
-      --incorrect-bg: #fee2e2;
-      --focus-ring: #0284c7;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 1.25rem;
-    }
-
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-    }
-
-    header {
-      background-color: var(--primary);
-      color: #ffffff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-
-    header h1 {
-      font-size: 1.65rem;
-      line-height: 1.3;
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      font-size: 0.95rem;
-      opacity: 0.95;
-    }
-
-    /* System / Filter Controls */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      background-color: var(--card-bg);
-      padding: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1.25rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .filter-btn {
-      padding: 0.5rem 0.85rem;
-      border: 2px solid var(--primary);
-      background: transparent;
-      color: var(--primary);
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      transition: all 0.2s ease;
-    }
-
-    .filter-btn:hover {
-      background-color: var(--primary);
-      color: #ffffff;
-    }
-
-    .filter-btn.active {
-      background-color: var(--primary);
-      color: #ffffff;
-    }
-
-    .filter-btn:focus-visible,
-    button:focus-visible {
-      outline: 3px solid var(--focus-ring);
-      outline-offset: 2px;
-    }
-
-    /* Stats & Progress */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Question Workspace */
-    .quiz-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin-bottom: 1.5rem;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.75rem;
-      background-color: #e2e8f0;
-      color: #334155;
-    }
-
-    .passage-box {
-      border-left: 4px solid var(--primary);
-      background-color: #f1f5f9;
-      padding: 1rem;
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 1.25rem;
-      font-size: 0.95rem;
-    }
-
-    .passage-box p {
-      margin-bottom: 0.5rem;
-    }
-
-    .passage-box a {
-      color: var(--primary);
-      font-weight: 600;
-      text-decoration: underline;
-    }
-
-    .passage-box a:focus-visible {
-      outline: 2px solid var(--focus-ring);
-      outline-offset: 2px;
-    }
-
-    .question-prompt {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 1.25rem;
-      color: var(--text);
-    }
-
-    .options-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .option-btn {
-      width: 100%;
-      text-align: left;
-      padding: 0.9rem 1.15rem;
-      background: #ffffff;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      font-size: 1rem;
-      color: var(--text);
-      cursor: pointer;
-      transition: border-color 0.15s, background-color 0.15s;
-      line-height: 1.4;
-    }
-
-    .option-btn:hover:not(:disabled) {
-      border-color: var(--primary);
-      background-color: #f8fafc;
-    }
-
-    .option-btn.selected {
-      border-color: var(--primary);
-      background-color: #eff6ff;
-    }
-
-    .option-btn.correct-choice {
-      background-color: var(--correct-bg);
-      border-color: var(--correct);
-      color: var(--correct);
-      font-weight: 600;
-    }
-
-    .option-btn.incorrect-choice {
-      background-color: var(--incorrect-bg);
-      border-color: var(--incorrect);
-      color: var(--incorrect);
-    }
-
-    /* Feedback Banner */
-    .feedback-banner {
-      display: none;
-      padding: 1rem;
-      border-radius: 6px;
-      margin-bottom: 1.25rem;
-      font-size: 0.95rem;
-    }
-
-    .feedback-banner.correct {
-      display: block;
-      background-color: var(--correct-bg);
-      border-left: 4px solid var(--correct);
-      color: var(--correct);
-    }
-
-    .feedback-banner.incorrect {
-      display: block;
-      background-color: var(--incorrect-bg);
-      border-left: 4px solid var(--incorrect);
-      color: var(--incorrect);
-    }
-
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-    }
-
-    .btn {
-      padding: 0.65rem 1.35rem;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .btn-submit {
-      background-color: var(--primary);
-      color: #ffffff;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background-color: var(--primary-dark);
-    }
-
-    .btn-next {
-      background-color: var(--accent);
-      color: #ffffff;
-      display: none;
-    }
-
-    .btn-next:hover {
-      background-color: #b45309;
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-
-    .empty-state h2 {
-      font-size: 1.4rem;
-      color: var(--correct);
-      margin-bottom: 0.5rem;
-    }
-
-    .reset-link {
-      background: none;
-      border: none;
-      color: var(--primary);
-      text-decoration: underline;
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      padding: 0;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header role="banner">
-      <h1>A&amp;P II Mastery Review: Lymphatics, Respiratory, &amp; Urinary</h1>
-      <p>Aligned with OpenStax <em>Anatomy &amp; Physiology 2e</em>. Questions exit the randomized queue once mastered.</p>
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #e0e6ed; background-color: #121820; max-width: 900px; margin: auto; padding: 20px; border-radius: 8px;">
+    <header style="border-bottom: 3px solid #38bdf8; padding-bottom: 10px; margin-bottom: 25px;">
+        <h1 style="color: #38bdf8; margin-bottom: 4px;">Lab 4: The Lymphatic System &amp; Immunity</h1>
+        <p style="color: #94a3b8; font-style: italic; margin-top: 0;">BIOL 2402 Lab Guide &amp; Online Worksheet | Anatomy &amp; Physiology II</p>
+        <p style="color: #94a3b8; font-style: italic; margin-top: 0;">
+            <a class="instructure_file_link instructure_scribd_file inline_disabled" title="Lymphatic Lab Pictures.pdf" href="https://nctc.instructure.com/courses/69943/files/11873095?wrap=1" target="_blank" data-canvas-previewable="false" data-api-endpoint="https://nctc.instructure.com/api/v1/courses/69943/files/11873095" data-api-returntype="File" rel="noopener" style="color: #38bdf8; text-decoration: underline;">Lymphatic Lab Pictures.pdf</a> | 
+            <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/21-1-anatomy-of-the-lymphatic-and-immune-systems" target="_blank" rel="noopener" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">OpenStax A&amp;P 2e: Chapter 21.1</a>
+        </p>
+        <p style="color: #94a3b8; font-style: italic; margin-top: 0;"><strong style="color: #cbd5e1;">Anatomical Variation Note:</strong> While these pathways represent typical human vascular and lymphatic anatomy, normal anatomical variation is common&mdash;vessel branching patterns, duct entries, and anastomoses frequently vary from person to person.</p>
     </header>
 
-    <div class="controls" role="region" aria-label="Module selection and progress controls">
-      <div class="filter-group" role="group" aria-label="Select system to study">
-        <button class="filter-btn active" data-system="all">All Systems</button>
-        <button class="filter-btn" data-system="lymphatic">Lymphatics (Ch 21)</button>
-        <button class="filter-btn" data-system="respiratory">Respiratory (Ch 22)</button>
-        <button class="filter-btn" data-system="urinary">Urinary (Ch 25)</button>
-      </div>
-      <div>
-        <button id="resetMasteryBtn" class="reset-link" title="Clear all local mastery progress">Reset Module Mastery</button>
-      </div>
-    </div>
+    <section style="margin-bottom: 30px;" aria-labelledby="sec4-goals">
+        <h2 id="sec4-goals" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">1. Learning Objectives</h2>
+        <p>By the end of this lab, you will be able to:</p>
+        <ul style="color: #cbd5e1;">
+            <li>Identify the histological architecture of lymphoid organs (lymph nodes, spleen, thymus, and MALT) using OpenStax 2e reference micrographs.</li>
+            <li>Differentiate the microscopic structures and functional compartments of the spleen (red pulp vs. white pulp) and lymph nodes (cortex vs. medulla).</li>
+            <li>Locate and name regional lymph node clusters, tonsils, and visceral lymphatic organs on anatomical models.</li>
+            <li>Map the systemic drainage territories of the Right Lymphatic Duct versus the Thoracic Duct into the venous circulation.</li>
+        </ul>
+    </section>
 
-    <div class="stats-bar" role="region" aria-label="Session statistics">
-      <div class="stat-card">
-        <div id="statRemaining" class="stat-value">0</div>
-        <div class="stat-label">In Queue</div>
-      </div>
-      <div class="stat-card">
-        <div id="statMastered" class="stat-value">0</div>
-        <div class="stat-label">Mastered</div>
-      </div>
-      <div class="stat-card">
-        <div id="statTotal" class="stat-value">0</div>
-        <div class="stat-label">Total Questions</div>
-      </div>
-    </div>
+    <section style="margin-bottom: 30px;" aria-labelledby="sec4-checklist">
+        <h2 id="sec4-checklist" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">2. Systematic Lymphatic Anatomy &amp; Histology Directory</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #1a222d; border: 1px solid #334155;" border="1" cellpadding="8">
+            <caption style="text-align: left; margin-bottom: 8px; color: #38bdf8; font-weight: bold;">Lymphoid Histology, Organs, and Drainage Territories (Lab Manual Exercise 5)</caption>
+            <thead>
+                <tr style="background-color: #0f172a; color: #38bdf8; border-bottom: 2px solid #38bdf8;">
+                    <th style="text-align: left; width: 25%;" scope="col">Organ / Tissue</th>
+                    <th style="text-align: left; width: 40%;" scope="col">Diagnostic Microscopic Structures (OpenStax A&amp;P 2e)</th>
+                    <th style="text-align: left; width: 35%;" scope="col">Key Functional / Gross Landmarks</th>
+                </tr>
+            </thead>
+            <tbody style="color: #cbd5e1;">
+                <tr style="background-color: #1e293b;">
+                    <td><strong style="color: #f1f5f9;">Lymph Node</strong></td>
+                    <td>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Fibrous capsule &amp; Trabeculae</li>
+                            <li>Subcapsular sinus &amp; Trabecular sinus</li>
+                            <li>Outer cortex with germinal centers</li>
+                            <li>Inner cortex (paracortex)</li>
+                            <li>Medulla (Medullary cords &amp; Medullary sinuses)</li>
+                        </ul>
+                    </td>
+                    <td>Filters lymph; resident macrophages and clustered T and B lymphocytes purge pathogens. Located along collecting vessels.</td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #f1f5f9;">Spleen</strong></td>
+                    <td>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Fibrous capsule &amp; Trabeculae</li>
+                            <li><strong style="color: #f1f5f9;">White Pulp:</strong> Germinal centers surrounding central arterioles</li>
+                            <li><strong style="color: #f1f5f9;">Red Pulp:</strong> Splenic cords (cords of Billroth) and venous sinusoids filled with RBCs</li>
+                        </ul>
+                    </td>
+                    <td>Filters blood; red pulp removes senescent erythrocytes; white pulp mounts adaptive immune responses. Features splenic vessels and hilum.</td>
+                </tr>
+                <tr style="background-color: #1e293b;">
+                    <td><strong style="color: #f1f5f9;">Thymus Gland</strong></td>
+                    <td>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Fibrous capsule &amp; Connective tissue septa</li>
+                            <li>Thymic lobules</li>
+                            <li>Cortex (densely packed thymocytes)</li>
+                            <li>Medulla (paler core containing epithelial reticular cells)</li>
+                        </ul>
+                    </td>
+                    <td>Bilobed primary organ in superior mediastinum between sternum and aorta; site of T-lymphocyte maturation and immunocompetence.</td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #f1f5f9;">Lymphoid Nodules &amp; Tonsils</strong></td>
+                    <td>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Unencapsulated dense lymphocyte clusters</li>
+                            <li>Germinal centers</li>
+                            <li>Mucosa-Associated Lymphoid Tissue (MALT)</li>
+                            <li>Peyer's patches (aggregated nodules in ileum)</li>
+                        </ul>
+                    </td>
+                    <td>Frontline defense intercepting ingested/inhaled environmental pathogens:
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Pharyngeal tonsil (adenoid)</li>
+                            <li>Palatine tonsils</li>
+                            <li>Lingual tonsil (base of tongue)</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr style="background-color: #1e293b;">
+                    <td><strong style="color: #f1f5f9;">Regional Lymph Nodes</strong></td>
+                    <td>Macroscopic encapsulated node groupings located throughout the body:
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Cervical lymph nodes (neck)</li>
+                            <li>Axillary lymph nodes (armpit/chest)</li>
+                            <li>Inguinal lymph nodes (groin)</li>
+                        </ul>
+                    </td>
+                    <td>Filter lymph draining from head/neck, upper limbs/mammary tissue, and lower extremities/pelvis respectively.</td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #f1f5f9;">Lymphatic Ducts &amp; Trunks</strong></td>
+                    <td>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong style="color: #f1f5f9;">Cisterna Chyli:</strong> Dilated sac anterior to lumbar vertebrae</li>
+                            <li><strong style="color: #f1f5f9;">Thoracic Duct:</strong> Ascends through mediastinum</li>
+                            <li><strong style="color: #f1f5f9;">Right Lymphatic Duct:</strong> Short terminal duct on right side</li>
+                        </ul>
+                    </td>
+                    <td><strong style="color: #f1f5f9;">Venous Terminations:</strong><br />&bull; <strong style="color: #38bdf8;">Right Lymphatic Duct:</strong> Drains right upper quadrant; empties into junction of <strong style="color: #f1f5f9;">Right Internal Jugular &amp; Right Subclavian Veins</strong>.<br />&bull; <strong style="color: #38bdf8;">Thoracic Duct:</strong> Drains entire lower body, left thorax, left upper limb, left head/neck; empties into junction of <strong style="color: #f1f5f9;">Left Internal Jugular &amp; Left Subclavian Veins</strong>.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
 
-    <main id="appWorkspace">
-      <!-- Active Question Shell -->
-      <section id="questionCard" class="quiz-card" aria-live="polite">
-        <span id="questionTag" class="badge">System</span>
-        
-        <div class="passage-box" id="passageContainer">
-          <p><strong>OpenStax Passage:</strong> <span id="passageText"></span></p>
-          <p id="readingLinkWrapper">
-            <em>Deep Dive: </em><a id="readingLink" href="#" target="_blank" rel="noopener noreferrer">OpenStax Textbook Reference</a>
-          </p>
-        </div>
+    <section style="margin-bottom: 30px;" aria-labelledby="sec4-worksheet">
+        <h2 id="sec4-worksheet" style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 5px;">3. Integrated Lab Scavenger Hunt &amp; Clinical Investigations</h2>
+        <p>Work in small groups and move through each guided activity. Use <strong style="color: #f1f5f9;">Chapter 21.1 in OpenStax Anatomy &amp; Physiology 2e</strong> (or your lab handout pictures) for the micrograph hunt, then transition directly to the anatomical models for gross landmarks and clinical applications.</p>
 
-        <p class="question-prompt" id="questionPrompt"></p>
+        <h3 style="color: #7dd3fc;">Activity 1: Digital Micrograph Hunt (OpenStax Chapter 21.1)</h3>
+        <p>Locate the specified OpenStax figures, examine the microscopic architecture, check off the clue, and answer the associated questions:</p>
+        <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 1 (The Island Filter &mdash; Lymph Node | Figure 21.8):</strong> Open Figure 21.8. Locate the micrograph panel showing the cortex and identify an active <strong style="color: #38bdf8;">germinal center</strong>.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A.</em> Which specific histological region of the node houses these circular germinal centers?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B.</em> What outer connective tissue structure encapsulates the entire organ and extends inward as trabeculae?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>Observation notes:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 2 (The Erythrocyte Graveyard &mdash; Spleen | Figure 21.9):</strong> Open Figure 21.9. Scan past the purple white pulp to identify the diffuse <strong style="color: #38bdf8;">red pulp</strong> filled with splenic sinusoids and cords of Billroth.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A.</em> Identify this specific structural component composed of venous sinuses packed with red blood cells and reticular fibers where senescent erythrocytes are removed:<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B.</em> Which functional region of the spleen consists of lymphoid nodules clustering around a central arteriole to mount adaptive immune responses?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>C.</em> What is the primary physiological task performed by resident macrophages in this specific vascular compartment?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>Observation notes:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 3 (The Training Ground &mdash; Thymus Gland | Figure 21.7):</strong> Open Figure 21.7. Identify a <strong style="color: #38bdf8;">thymic lobule</strong> and differentiate its outer, densely packed cortex from its paler core.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A.</em> Name the paler central zone of each lobule:<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B.</em> Immature cells of which lymphocyte class differentiate into immunocompetent cells within this primary organ under the influence of thymic hormones?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>Observation notes:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 4 (The Unencapsulated Outpost &mdash; MALT / Tonsil | Figures 21.10 &amp; 21.11):</strong> View the micrographs in Figures 21.10 and 21.11 to locate discrete clusters of lymphocytes lacking a surrounding connective tissue boundary.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A.</em> What clinical acronym is used to describe this mucosa-associated lymphatic tissue?<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B.</em> Describe the structural difference between an unencapsulated lymphoid nodule (such as a tonsil or Peyer's patch) and a true lymph node:<br />
+                    <em>Answer:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>Observation notes:</em> [ <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+        </ul>
 
-        <ul class="options-list" id="optionsList" role="radiogroup" aria-label="Answer options"></ul>
+        <h3 style="color: #7dd3fc;">Activity 2: Gross Anatomical Landmarks &amp; Systemic Drainage Mapping</h3>
+        <p>Locate the specified landmarks on the torso, full-body, and head/neck sagittal models, then trace the systemic drainage pathways into the venous circulation:</p>
+        <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 5 (The Throat Guard &mdash; Tonsils):</strong> Locate the lymphoid structures arranged in Waldeyer&rsquo;s ring in the oral and pharyngeal cavities on the head/neck sagittal model.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A.</em> Identify the tonsil located in the nasopharynx: [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B.</em> Identify the paired tonsils in the posterolateral oropharynx: [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 6 (Regional Checkpoints &mdash; Lymph Node Clusters):</strong> Locate and identify the three major superficial and regional lymph node clusters on the full-body or torso model:
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>1. Cervical cluster location:</em> [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>2. Axillary cluster location:</em> [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>3. Inguinal cluster location:</em> [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 7 (The Abdominal Reservoir &mdash; Cisterna Chyli):</strong> Locate the sac-like dilation situated anterior to the lumbar vertebrae L1&ndash;L2 that serves as the origin of the thoracic duct.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A. Target Structure:</em> [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B. Source Fluids:</em> Which major lower lymphatic trunks converge here to form this sac? [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 8 (The Mediastinal Highway &mdash; Thoracic Duct):</strong> Trace the large lymphatic collecting vessel running superiorly along the anterior thoracic spine on the torso model.
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <em>A. Target Structure:</em> [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]<br />
+                    <em>B. Venous Junction:</em> Into which exact junction does this duct empty? [ <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]
+                </div>
+            </li>
+            <li style="margin-bottom: 20px;">
+                <label style="color: #f1f5f9;">
+                    <input type="checkbox"> <strong>Clue 9 (Systemic Drainage Mapping):</strong> Determine the correct collecting duct and terminal venous insertion point for interstitial fluid originating in each anatomical location:
+                </label>
+                <div style="margin-left: 24px; margin-top: 6px; color: #cbd5e1;">
+                    <p style="margin: 6px 0;"><strong>1. Interstitial fluid reabsorbed from the Right Forearm and Hand:</strong><br />
+                    <em>Collecting Duct:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ] &rarr; <em>Empties into Junction of:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]</p>
+                    <p style="margin: 6px 0;"><strong>2. Interstitial fluid reabsorbed from the Left Lower Leg and Foot:</strong><br />
+                    <em>Initial Sac:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ] &rarr; <em>Collecting Duct:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ] &rarr; <em>Empties into Junction of:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]</p>
+                    <p style="margin: 6px 0;"><strong>3. Interstitial fluid reabsorbed from the Right Breast and Axilla:</strong><br />
+                    <em>Primary Regional Nodes:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ] &rarr; <em>Collecting Duct:</em> [ <span style="display: inline-block; min-width: 150px; border-bottom: 1px solid #64748b;">&nbsp;</span> ]</p>
+                </div>
+            </li>
+        </ul>
 
-        <div id="feedbackBox" class="feedback-banner" role="alert"></div>
+        <h3 style="color: #7dd3fc;">Activity 3: Clinical &amp; Applied Pathology</h3>
+        <ol style="color: #cbd5e1;">
+            <li style="margin-bottom: 16px;">
+                <strong style="color: #f1f5f9;">Lymphedema Pathophysiology:</strong> If a patient undergoes a radical mastectomy with surgical excision of axillary lymph nodes, why does chronic swelling (lymphedema) commonly occur in the ipsilateral arm?
+                <div style="margin-top: 8px; border-bottom: 1px dashed #475569; height: 35px;"></div>
+            </li>
+            <li style="margin-bottom: 16px;">
+                <strong style="color: #f1f5f9;">Splenic Rupture:</strong> The spleen is a highly vascular, fragile organ anchored to the stomach via the gastrosplenic ligament. Why can severe blunt abdominal trauma to the left hypochondriac region lead to rapid, life-threatening hypovolemic shock?
+                <div style="margin-top: 8px; border-bottom: 1px dashed #475569; height: 35px;"></div>
+            </li>
+        </ol>
+    </section>
 
-        <div class="actions">
-          <button id="submitBtn" class="btn btn-submit" disabled>Check Answer</button>
-          <button id="nextBtn" class="btn btn-next">Next Question &rarr;</button>
-        </div>
-      </section>
+    <footer style="margin-top: 40px; background: #1a222d; padding: 20px; border-left: 4px solid #38bdf8; border-radius: 4px;" aria-labelledby="sec4-key">
+        <h2 id="sec4-key" style="color: #38bdf8; margin-top: 0;">Instructor Answer Key</h2>
+        <details>
+            <summary style="font-weight: bold; cursor: pointer; color: #38bdf8;">Click to Expand Answer Key</summary>
+            <div style="margin-top: 15px; color: #cbd5e1;">
+                <h3 style="color: #7dd3fc;">Activity 1: Digital Micrograph Hunt (OpenStax Chapter 21.1)</h3>
+                <ul>
+                    <li><strong style="color: #f1f5f9;">Clue 1 (Lymph Node &mdash; Figure 21.8):</strong>
+                        <ul>
+                            <li><em>A.</em> Outer cortex.</li>
+                            <li><em>B.</em> Fibrous capsule.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 2 (Spleen &mdash; Figure 21.9):</strong>
+                        <ul>
+                            <li><em>A.</em> Red pulp of the spleen.</li>
+                            <li><em>B.</em> White pulp of the spleen.</li>
+                            <li><em>C.</em> Phagocytosis and removal of defective, senescent (aging) red blood cells and blood-borne debris/pathogens.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 3 (Thymus Gland &mdash; Figure 21.7):</strong>
+                        <ul>
+                            <li><em>A.</em> Medulla (thymic medulla).</li>
+                            <li><em>B.</em> Thymus gland (specifically within the thymic cortex); T lymphocytes (T cells).</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 4 (MALT / Tonsil &mdash; Figures 21.10 &amp; 21.11):</strong>
+                        <ul>
+                            <li><em>A.</em> MALT (Mucosa-Associated Lymphoid Tissue).</li>
+                            <li><em>B.</em> Lymphoid nodules consist of dense clusters of lymphocytes lacking an external fibrous capsule. True lymph nodes are distinct organs fully enclosed by a dense fibrous connective tissue capsule with trabeculae extending into the interior.</li>
+                        </ul>
+                    </li>
+                </ul>
 
-      <!-- All Mastered Completion Screen -->
-      <section id="completedCard" class="quiz-card empty-state" style="display: none;">
-        <h2>System Mastered!</h2>
-        <p>You have successfully answered every question in this category without any repeating prompts.</p>
-        <p style="margin-top: 0.5rem; color: var(--muted);">Choose another system above or reset mastery to run another round of deliberate practice.</p>
-      </section>
-    </main>
-  </div>
+                <h3 style="color: #7dd3fc;">Activity 2: Gross Anatomical Landmarks &amp; Systemic Drainage Mapping</h3>
+                <ul>
+                    <li><strong style="color: #f1f5f9;">Clue 5 (Tonsils):</strong>
+                        <ul>
+                            <li><em>A. Nasopharynx:</em> Pharyngeal tonsil (adenoid).</li>
+                            <li><em>B. Posterolateral Oropharynx:</em> Palatine tonsils.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 6 (Regional Node Clusters):</strong>
+                        <ul>
+                            <li><em>1. Cervical:</em> Neck / along internal and external jugular veins.</li>
+                            <li><em>2. Axillary:</em> Armpit / lateral thoracic wall and anterior axillary fold.</li>
+                            <li><em>3. Inguinal:</em> Groin / along femoral vessels just inferior to the inguinal ligament.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 7 (Cisterna Chyli):</strong>
+                        <ul>
+                            <li><em>A. Target Structure:</em> Cisterna Chyli.</li>
+                            <li><em>B. Source Fluids:</em> Right and left lumbar trunks and the intestinal trunk.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 8 (Thoracic Duct):</strong>
+                        <ul>
+                            <li><em>A. Target Structure:</em> Thoracic Duct.</li>
+                            <li><em>B. Venous Junction:</em> Empties into the junction of the Left Internal Jugular Vein and Left Subclavian Vein.</li>
+                        </ul>
+                    </li>
+                    <li><strong style="color: #f1f5f9;">Clue 9 (Systemic Drainage Mapping):</strong>
+                        <ul>
+                            <li><em>1. Right Upper Limb:</em> Drains via the <strong style="color: #38bdf8;">Right Lymphatic Duct</strong> &rarr; empties into the junction of the <strong style="color: #f1f5f9;">Right Internal Jugular Vein and Right Subclavian Vein</strong>.</li>
+                            <li><em>2. Left Lower Extremity:</em> Fluid collects into lumbar trunks &rarr; <strong style="color: #38bdf8;">Cisterna Chyli</strong> &rarr; ascends the <strong style="color: #38bdf8;">Thoracic Duct</strong> &rarr; empties into the junction of the <strong style="color: #f1f5f9;">Left Internal Jugular Vein and Left Subclavian Vein</strong>.</li>
+                            <li><em>3. Right Breast &amp; Axilla:</em> Filters through the <strong style="color: #38bdf8;">Axillary lymph nodes</strong> &rarr; drains into the <strong style="color: #38bdf8;">Right Lymphatic Duct</strong>.</li>
+                        </ul>
+                    </li>
+                </ul>
 
-  <script>
-    /* Question Bank: OpenStax A&P 2e Ch 21, 22, 25 */
-    const questionBank = [
-      /* Lymphatic & Immune (Ch 21) */
-      {
-        id: "l-01",
-        system: "lymphatic",
-        systemName: "Lymphatics (Ch 21)",
-        passage: "Lymph fluid originates as excess interstitial fluid that is taken up by blunt-ended lymphatic capillaries. These capillaries converge into larger collecting vessels, pass through series of lymph nodes for filtration, and ultimately converge into trunks and two large ducts. The thoracic duct empties into the left internal jugular and left subclavian veins, draining lymph from both lower extremities, the abdomen, the left upper extremity, and the left side of the head and thorax.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/21-1-anatomy-of-the-lymphatic-and-immune-systems",
-        prompt: "Which lymphatic structure receives lymph drained from both lower extremities and empties directly into the left subclavian vein?",
-        options: [
-          "Thoracic duct",
-          "Right lymphatic duct",
-          "Cisterna chyli",
-          "Inguinal lymphatic trunk"
-        ],
-        correct: 0,
-        explanation: "The thoracic duct begins inferiorly at the cisterna chyli and drains the entire lower half of the body (both lower extremities and abdomen) as well as the left upper quadrant into the junction of the left internal jugular and subclavian veins."
-      },
-      {
-        id: "l-02",
-        system: "lymphatic",
-        systemName: "Lymphatics (Ch 21)",
-        passage: "Primary lymphoid organs are the anatomical sites where lymphocytes differentiate, proliferate, and mature from progenitor cells. Bone marrow produces both B and T cell precursors, but while B cells complete their maturation in the red bone marrow, immature progenitor T cells migrate to the thymus to undergo positive and negative selection.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/21-1-anatomy-of-the-lymphatic-and-immune-systems",
-        prompt: "Which of the following is classified anatomically as a primary lymphoid organ?",
-        options: [
-          "Thymus",
-          "Spleen",
-          "Cervical lymph node",
-          "Palatine tonsil"
-        ],
-        correct: 0,
-        explanation: "The primary lymphoid organs are red bone marrow and the thymus; secondary lymphoid organs include the spleen, lymph nodes, and tonsils."
-      },
-      {
-        id: "l-03",
-        system: "lymphatic",
-        systemName: "Lymphatics (Ch 21)",
-        passage: "The spleen is a large secondary lymphoid organ situated in the upper left quadrant of the abdomen. Histologically, it is organized into white pulp and red pulp. While the white pulp surrounds central arterioles and mounts adaptive immune responses against blood-borne pathogens, the vascular red pulp contains macrophages that remove aging, damaged, and worn-out erythrocytes and blood platelets from circulation.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/21-1-anatomy-of-the-lymphatic-and-immune-systems",
-        prompt: "Phagocytic destruction of defective and senescent erythrocytes occurs primarily within which splenic zone?",
-        options: [
-          "Red pulp",
-          "White pulp",
-          "Germinal center",
-          "Central arteriole"
-        ],
-        correct: 0,
-        explanation: "The red pulp functions primarily as a filtration bed where splenic cords and sinuses remove dying red blood cells and debris, while the white pulp houses adaptive B and T lymphocytes."
-      },
-      {
-        id: "l-04",
-        system: "lymphatic",
-        systemName: "Lymphatics (Ch 21)",
-        passage: "Innate immunity features non-specific cellular defenses that respond immediately without requiring clonal expansion or previous antigen exposure. Natural killer (NK) cells are cytotoxic innate lymphocytes that recognize and destroy cells lacking self MHC class I molecules, making them critical in destroying virus-infected cells and incipient tumor cells.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/21-2-barrier-defenses-and-the-innate-immune-response",
-        prompt: "Which innate immune lymphocyte destroys virus-infected and cancerous cells that have downregulated surface MHC Class I expression?",
-        options: [
-          "Natural killer (NK) cell",
-          "Cytotoxic CD8+ T cell",
-          "Plasma cell",
-          "Eosinophil"
-        ],
-        correct: 0,
-        explanation: "Natural killer cells recognize the down-regulation or absence of self-MHC Class I markers on aberrant host cells and induce apoptosis using perforins and granzymes."
-      },
-      {
-        id: "l-05",
-        system: "lymphatic",
-        systemName: "Lymphatics (Ch 21)",
-        passage: "Antibodies, or immunoglobulins, are divided into five distinct classes based on their constant heavy-chain regions. Immunoglobulin G (IgG) is the most abundant class in plasma, comprising approximately 80 percent of circulating antibodies. It has the unique physiological capacity to cross the maternal placenta, conferring passive immunity to the developing fetus.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/21-4-the-adaptive-immune-response-b-lymphocytes-and-antibodies",
-        prompt: "Which immunoglobulin class crosses the placental barrier to confer naturally acquired passive immunity to the fetus?",
-        options: [
-          "IgG",
-          "IgA",
-          "IgM",
-          "IgE"
-        ],
-        correct: 0,
-        explanation: "IgG is the only antibody class capable of traversing the placental barrier, protecting neonates for months after birth."
-      },
-
-      /* Respiratory System (Ch 22) */
-      {
-        id: "r-01",
-        system: "respiratory",
-        systemName: "Respiratory (Ch 22)",
-        passage: "The respiratory tract is anatomically divided into conducting and respiratory zones. The conducting zone comprises all conduits that filter, warm, and humidify incoming air (nose, pharynx, larynx, trachea, bronchi, and terminal bronchioles). The respiratory zone begins where microscopic alveoli first appear along respiratory bronchioles and alveolar ducts, serving as the site of pulmonary gas exchange.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-1-organs-and-structures-of-the-respiratory-system",
-        prompt: "Which microscopic airway represents the exact anatomical beginning of the respiratory zone?",
-        options: [
-          "Respiratory bronchiole",
-          "Terminal bronchiole",
-          "Primary bronchus",
-          "Lobar bronchus"
-        ],
-        correct: 0,
-        explanation: "The respiratory zone begins at the respiratory bronchioles, where alveoli first branch off the walls, enabling external respiration."
-      },
-      {
-        id: "r-02",
-        system: "respiratory",
-        systemName: "Respiratory (Ch 22)",
-        passage: "The alveolar wall consists primarily of three distinct cell types. Type I alveolar cells are simple squamous epithelial cells that form the extremely thin gas-permeable barrier. Type II alveolar cells (septal cells) are interspersed cuboidal cells that secrete pulmonary surfactant, a complex mixture of phospholipids and lipoproteins that lowers alveolar surface tension and prevents alveolar collapse at end-expiration.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-1-organs-and-structures-of-the-respiratory-system",
-        prompt: "What is the primary physiological role of pulmonary surfactant synthesized by Type II alveolar cells?",
-        options: [
-          "Reducing surface tension in the alveoli to prevent collapse",
-          "Phagocytosing inhaled microbial pathogens and particulate matter",
-          "Forming the ultra-thin basement layer for carbon dioxide diffusion",
-          "Humidifying inspired air through goblet cell mucous secretion"
-        ],
-        correct: 0,
-        explanation: "Pulmonary surfactant reduces the cohesive surface tension of the thin aqueous alveolar lining, preventing alveolar atelectasis (collapse) during quiet expiration."
-      },
-      {
-        id: "r-03",
-        system: "respiratory",
-        systemName: "Respiratory (Ch 22)",
-        passage: "Pulmonary ventilation operates on Boyle's law, which states that at constant temperature, the pressure of a gas is inversely proportional to its volume ($P_1V_1 = P_2V_2$). During resting inhalation, contraction of the diaphragm flattens the thoracic floor and external intercostals elevate the ribs, expanding thoracic volume and dropping intrapulmonary pressure below atmospheric pressure.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing",
-        prompt: "According to Boyle's law, expanding the volume of the thoracic cavity during normal inhalation results in:",
-        options: [
-          "A decrease in intrapulmonary pressure below atmospheric pressure",
-          "An increase in intra-alveolar pressure above atmospheric pressure",
-          "An immediate collapse of the intrapleural pressure gradient",
-          "Equalization of intrapleural pressure with ambient barometric pressure"
-        ],
-        correct: 0,
-        explanation: "As thoracic cavity volume increases, intrapulmonary pressure decreases below atmospheric pressure (to about 759 mmHg), driving ambient air down its pressure gradient into the lungs."
-      },
-      {
-        id: "r-04",
-        system: "respiratory",
-        systemName: "Respiratory (Ch 22)",
-        passage: "Carbon dioxide is carried in blood via three mechanisms: roughly 7 to 10 percent dissolves directly in plasma, 20 percent binds to amino groups on globin proteins as carbaminohemoglobin, and approximately 70 percent is transported as bicarbonate ions ($HCO_3^-$) synthesized inside erythrocytes by carbonic anhydrase.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-5-transport-of-gases",
-        prompt: "The largest percentage of carbon dioxide is transported in systemic venous blood in the form of:",
-        options: [
-          "Bicarbonate ions dissolved in plasma",
-          "Carbaminohemoglobin complexes",
-          "Free molecular gas dissolved directly in blood plasma",
-          "Carbonic acid crystals attached to erythrocyte membranes"
-        ],
-        correct: 0,
-        explanation: "Roughly 70% of transported carbon dioxide is converted inside erythrocytes into bicarbonate ($HCO_3^-$) by carbonic anhydrase and pumped into the plasma via the chloride shift."
-      },
-
-      /* Urinary System (Ch 25) */
-      {
-        id: "u-01",
-        system: "urinary",
-        systemName: "Urinary (Ch 25)",
-        passage: "The nephron is the structural and functional unit of the kidney. It is divided into two broad categories: cortical nephrons, which have short nephron loops extending only shallowly into the outer medulla, and juxtamedullary nephrons, which possess long loops of Henle plunging deep into the renal pyramid and wrapped by specialized vasa recta capillaries to create the medullary osmotic gradient.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/25-2-microscopic-anatomy-of-the-kidney",
-        prompt: "Which nephron population has long loops of Henle that extend deep into the inner medulla to establish the osmotic concentration gradient?",
-        options: [
-          "Juxtamedullary nephrons",
-          "Cortical nephrons",
-          "Peritubular nephrons",
-          "Interlobular nephrons"
-        ],
-        correct: 0,
-        explanation: "Juxtamedullary nephrons (comprising about 15% of all nephrons) have long loops of Henle that dive deep into the renal medulla, working alongside the vasa recta to generate concentrated urine."
-      },
-      {
-        id: "u-02",
-        system: "urinary",
-        systemName: "Urinary (Ch 25)",
-        passage: "The filtration membrane in the renal corpuscle consists of three biological barriers: the fenestrated capillary endothelium of the glomerulus, an intervening acellular basement membrane, and the visceral layer of Bowman's capsule formed by podocytes. Podocytes project foot processes (pedicels) that interdigitate to form narrow filtration slits preventing large plasma proteins from entering the filtrate.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/25-3-physiology-of-urine-formation-overview",
-        prompt: "The filtration slits that form the final biological sieve of the glomerular filtration membrane are created by interdigitating pedicels of which cells?",
-        options: [
-          "Podocytes",
-          "Macula densa cells",
-          "Mesangial cells",
-          "Juxtaglomerular granular cells"
-        ],
-        correct: 0,
-        explanation: "Podocytes form the visceral layer of the glomerular capsule; their fingerlike pedicels wrap around the capillaries, leaving slit pores that exclude medium-to-large plasma proteins."
-      },
-      {
-        id: "u-03",
-        system: "urinary",
-        systemName: "Urinary (Ch 25)",
-        passage: "Glomerular filtration is driven by physical Starling forces. The primary driving force favoring filtration is Glomerular Hydrostatic Pressure ($GBHP \\approx 55\\text{ mmHg}$), which pushes water and solutes across the membrane. Opposing filtration are Capsular Hydrostatic Pressure ($CHP \\approx 15\\text{ mmHg}$) and Blood Colloid Osmotic Pressure ($BCOP \\approx 30\\text{ mmHg}$), yielding a Net Filtration Pressure of approximately $10\\text{ mmHg}$.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/25-4-physiology-of-urine-formation-glomerular-filtration",
-        prompt: "Which Starling force directly opposes glomerular filtration by exerting osmotic pull back into the glomerular capillaries due to retained plasma proteins?",
-        options: [
-          "Blood colloid osmotic pressure (BCOP)",
-          "Glomerular blood hydrostatic pressure (GBHP)",
-          "Capsular hydrostatic pressure (CHP)",
-          "Renal interstitial osmotic pressure"
-        ],
-        correct: 0,
-        explanation: "Blood colloid osmotic pressure (BCOP, ~30 mmHg) is exerted by albumin and other circulating proteins retained within the capillary, pulling fluid back into the vascular space."
-      },
-      {
-        id: "u-04",
-        system: "urinary",
-        systemName: "Urinary (Ch 25)",
-        passage: "The proximal convoluted tubule (PCT) is lined with simple cuboidal epithelial cells featuring a dense apical brush border of microvilli. This high surface area accommodates extensive tubular reabsorption: 100 percent of filtered glucose and amino acids, roughly 65 percent of sodium and water, and the majority of filtered potassium and bicarbonate are recovered here.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/25-5-physiology-of-urine-formation-tubular-reabsorption-and-secretion",
-        prompt: "Under healthy physiological conditions, virtually 100 percent of filtered glucose and amino acids are reabsorbed in which nephron segment?",
-        options: [
-          "Proximal convoluted tubule (PCT)",
-          "Descending limb of the nephron loop",
-          "Distal convoluted tubule (DCT)",
-          "Medullary collecting duct"
-        ],
-        correct: 0,
-        explanation: "The PCT features sodium-glucose cotransporters (SGLTs) and secondary active transport mechanisms that recover 100% of organic nutrients like glucose and amino acids from the tubular lumen."
-      },
-      {
-        id: "u-05",
-        system: "urinary",
-        systemName: "Urinary (Ch 25)",
-        passage: "The juxtaglomerular apparatus (JGA) regulates systemic blood pressure and GFR. It consists of the macula densa, which monitors sodium chloride concentration and flow rate in the distal tubule, and juxtaglomerular (granular) cells in the afferent arteriole wall. When blood pressure drops or NaCl decreases, granular cells secrete the enzyme renin to initiate the renin-angiotensin-aldosterone system.",
-        readingUrl: "https://openstax.org/books/anatomy-and-physiology-2e/pages/25-2-microscopic-anatomy-of-the-kidney",
-        prompt: "Which specialized cells of the juxtaglomerular apparatus monitor fluid velocity and NaCl concentration in the filtrate flowing through the distal tubule?",
-        options: [
-          "Macula densa cells",
-          "Granular cells",
-          "Extraglomerular mesangial cells",
-          "Principal cells"
-        ],
-        correct: 0,
-        explanation: "The macula densa consists of specialized cuboidal epithelial cells in the distal convoluted tubule that act as osmoreceptors, detecting shifts in tubular luminal NaCl."
-      }
-    ];
-
-    /* Mastery & Engine State */
-    const STORAGE_KEY = "ap2_lymph_resp_urin_mastery_v1";
-    let masteryData = loadMastery();
-    let currentSystemFilter = "all";
-    let activeQuestion = null;
-    let selectedOptionIndex = null;
-
-    /* DOM Selectors */
-    const questionCard = document.getElementById("questionCard");
-    const completedCard = document.getElementById("completedCard");
-    const questionTag = document.getElementById("questionTag");
-    const passageText = document.getElementById("passageText");
-    const readingLink = document.getElementById("readingLink");
-    const questionPrompt = document.getElementById("questionPrompt");
-    const optionsList = document.getElementById("optionsList");
-    const feedbackBox = document.getElementById("feedbackBox");
-    const submitBtn = document.getElementById("submitBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const resetMasteryBtn = document.getElementById("resetMasteryBtn");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-
-    const statRemaining = document.getElementById("statRemaining");
-    const statMastered = document.getElementById("statMastered");
-    const statTotal = document.getElementById("statTotal");
-
-    function loadMastery() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : {};
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function saveMastery() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(masteryData));
-      } catch (e) {
-        console.error("Local storage error", e);
-      }
-    }
-
-    /* Fisher-Yates Shuffle */
-    function shuffleArray(arr) {
-      const array = [...arr];
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    /* Pool Filtering & Non-Repeating Logic */
-    function getSystemPool(systemKey) {
-      if (systemKey === "all") return questionBank;
-      return questionBank.filter(q => q.system === systemKey);
-    }
-
-    function getUnmasteredPool(systemKey) {
-      const fullPool = getSystemPool(systemKey);
-      return fullPool.filter(q => !masteryData[q.id] || masteryData[q.id] < 1);
-    }
-
-    function updateStats() {
-      const totalInSystem = getSystemPool(currentSystemFilter).length;
-      const unmastered = getUnmasteredPool(currentSystemFilter).length;
-      const mastered = totalInSystem - unmastered;
-
-      statRemaining.textContent = unmastered;
-      statMastered.textContent = mastered;
-      statTotal.textContent = totalInSystem;
-    }
-
-    /* Pick next randomized question without repeating mastered items */
-    function loadNextQuestion() {
-      selectedOptionIndex = null;
-      submitBtn.disabled = true;
-      submitBtn.style.display = "inline-block";
-      nextBtn.style.display = "none";
-      feedbackBox.className = "feedback-banner";
-      feedbackBox.textContent = "";
-
-      const availablePool = getUnmasteredPool(currentSystemFilter);
-
-      if (availablePool.length === 0) {
-        questionCard.style.display = "none";
-        completedCard.style.display = "block";
-        updateStats();
-        return;
-      }
-
-      questionCard.style.display = "block";
-      completedCard.style.display = "none";
-
-      // Select random item from unmastered pool
-      const randomIndex = Math.floor(Math.random() * availablePool.length);
-      activeQuestion = availablePool[randomIndex];
-
-      // Prepare UI
-      questionTag.textContent = activeQuestion.systemName;
-      passageText.textContent = activeQuestion.passage;
-      readingLink.href = activeQuestion.readingUrl;
-      readingLink.setAttribute("aria-label", `Read more on ${activeQuestion.systemName} in OpenStax`);
-      questionPrompt.textContent = activeQuestion.prompt;
-
-      // Shuffle options randomly
-      const mappedOptions = activeQuestion.options.map((text, idx) => ({
-        text,
-        isCorrect: idx === activeQuestion.correct
-      }));
-      const shuffledOptions = shuffleArray(mappedOptions);
-      activeQuestion._currentShuffled = shuffledOptions;
-
-      // Render options
-      optionsList.innerHTML = "";
-      shuffledOptions.forEach((opt, idx) => {
-        const li = document.createElement("li");
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "option-btn";
-        btn.setAttribute("role", "radio");
-        btn.setAttribute("aria-checked", "false");
-        btn.innerHTML = `<strong>${String.fromCharCode(65 + idx)})</strong> ${opt.text}`;
-        
-        btn.addEventListener("click", () => selectOption(idx));
-        li.appendChild(btn);
-        optionsList.appendChild(li);
-      });
-
-      updateStats();
-    }
-
-    function selectOption(index) {
-      selectedOptionIndex = index;
-      const buttons = optionsList.querySelectorAll(".option-btn");
-      buttons.forEach((btn, idx) => {
-        const isCurrent = idx === index;
-        btn.classList.toggle("selected", isCurrent);
-        btn.setAttribute("aria-checked", isCurrent ? "true" : "false");
-      });
-      submitBtn.disabled = false;
-    }
-
-    function checkAnswer() {
-      if (selectedOptionIndex === null || !activeQuestion) return;
-
-      const buttons = optionsList.querySelectorAll(".option-btn");
-      buttons.forEach(btn => (btn.disabled = true));
-
-      const chosen = activeQuestion._currentShuffled[selectedOptionIndex];
-      const isCorrect = chosen.isCorrect;
-
-      buttons.forEach((btn, idx) => {
-        if (activeQuestion._currentShuffled[idx].isCorrect) {
-          btn.classList.add("correct-choice");
-        } else if (idx === selectedOptionIndex) {
-          btn.classList.add("incorrect-choice");
-        }
-      });
-
-      if (isCorrect) {
-        masteryData[activeQuestion.id] = 1; // Mastered: pulled out of future random draws
-        feedbackBox.className = "feedback-banner correct";
-        feedbackBox.innerHTML = `<strong>Correct!</strong> Question mastered and removed from your active review rotation.<br>${activeQuestion.explanation}`;
-      } else {
-        masteryData[activeQuestion.id] = 0; // Reset or keep in rotation
-        feedbackBox.className = "feedback-banner incorrect";
-        feedbackBox.innerHTML = `<strong>Incorrect.</strong> This question will remain in your study queue until mastered.<br>${activeQuestion.explanation}`;
-      }
-
-      saveMastery();
-      updateStats();
-
-      submitBtn.style.display = "none";
-      nextBtn.style.display = "inline-block";
-      nextBtn.focus();
-    }
-
-    /* Event Listeners */
-    submitBtn.addEventListener("click", checkAnswer);
-    nextBtn.addEventListener("click", loadNextQuestion);
-
-    filterButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        filterButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentSystemFilter = btn.getAttribute("data-system");
-        loadNextQuestion();
-      });
-    });
-
-    resetMasteryBtn.addEventListener("click", () => {
-      if (confirm("Reset your mastery progress for all questions in this app?")) {
-        masteryData = {};
-        saveMastery();
-        loadNextQuestion();
-      }
-    });
-
-    /* Initial boot */
-    loadNextQuestion();
-  </script>
-</body>
-</html>
+                <h3 style="color: #7dd3fc;">Activity 3: Clinical &amp; Applied Pathology</h3>
+                <ol>
+                    <li><strong style="color: #f1f5f9;">Lymphedema:</strong> Lymphatic vessels function as an essential one-way drainage system that retrieves excess interstitial fluid not reabsorbed by blood capillaries. Surgical removal of axillary lymph nodes and collecting vessels severs the drainage pathway for the arm, causing protein-rich fluid to accumulate in the interstitial spaces of the limb.</li>
+                    <li><strong style="color: #f1f5f9;">Splenic Rupture:</strong> The spleen receives substantial arterial blood flow directly from the celiac trunk via the large splenic artery and lacks a heavy protective fibrous capsule. Lacerations tear the delicate red pulp sinusoids and splenic cords, resulting in massive intraperitoneal hemorrhage and rapid hypovolemic shock.</li>
+                </ol>
+            </div>
+        </details>
+    </footer>
+</div>
