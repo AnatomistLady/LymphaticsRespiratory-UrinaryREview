@@ -10,9 +10,6 @@
             --bg-card: #151d2a;
             --bg-input: #1e293b;
             --border: #334155;
-            --accent-lymph: #38bdf8;
-            --accent-resp: #a855f7;
-            --accent-urin: #f59e0b;
             --accent-active: #38bdf8;
             --correct: #22c55e;
             --incorrect: #ef4444;
@@ -58,7 +55,6 @@
             margin-bottom: 16px;
         }
 
-        /* Tier Tracker */
         .tier-nav {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -94,7 +90,6 @@
             cursor: not-allowed;
         }
 
-        /* HUD */
         .hud {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -140,7 +135,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Stage */
         .quiz-stage {
             padding: 28px 24px;
         }
@@ -244,7 +238,6 @@
             opacity: 0.9;
         }
 
-        /* Banner Screen */
         .tier-unlocked-screen, .mastery-screen {
             display: none;
             text-align: center;
@@ -326,17 +319,15 @@
         <button class="btn-next" id="btn-next">Next Question &rarr;</button>
     </div>
 
-    <!-- Unlock Celebration Screen -->
     <div class="tier-unlocked-screen" id="tier-unlocked-screen">
         <div class="badge-icon">&#128275;</div>
         <h2 id="unlock-heading" style="color: var(--accent-active); margin-bottom: 8px;">Next Module Unlocked!</h2>
         <p id="unlock-subtext" style="color: var(--text-muted); max-width: 540px; margin: auto;">
-            Congratulations! You have mastered at least 5/6 (84 questions) in this system. You have proven competent understanding and earned clearance to advance.
+            Congratulations! You have mastered at least 5/6 (84 questions) in this system.
         </p>
         <button class="btn-advance" id="btn-advance" onclick="advanceToNextTier()">Launch Next Module &rarr;</button>
     </div>
 
-    <!-- Final Course Mastery Screen -->
     <div class="mastery-screen" id="mastery-screen">
         <div class="badge-icon">&#127942;</div>
         <h2 style="color: #38bdf8; margin-bottom: 8px;">Full Multi-System Mastery Achieved!</h2>
@@ -348,203 +339,493 @@
 </div>
 
 <script>
-/**
- * GENERATOR & CURATED REPOSITORY OF 300 QUESTIONS
- * 100 Lymphatics (OpenStax Ch 21)
- * 100 Respiratory (OpenStax Ch 22)
- * 100 Urinary (OpenStax Ch 25)
- */
-
-function generateModuleBank(systemKey) {
+function buildSystemBank(systemKey) {
     const bank = [];
     
     if (systemKey === 'lymph') {
-        const curatedLymph = [
-            { q: "Lymph fluid is predominantly derived from which physiological fluid compartment?", opts: ["Intracellular fluid", "Interstitial fluid", "Cerebrospinal fluid", "Endolymph"], ans: 1, exp: "Interstitial fluid exiting blood capillaries that is not reabsorbed enters lymphatic capillaries." },
-            { q: "Which structural feature allows lymphatic capillaries to absorb large proteins, debris, and cellular fragments?", opts: ["Continuous tight junctions and basement membranes", "Overlapping endothelial flap minivalves anchored by collagen filaments", "A muscular tunica media", "Negatively charged fenestrations"], ans: 1, exp: "Endothelial flaps pull open under high interstitial hydrostatic pressure, creating one-way minivalves." },
-            { q: "What are the specialized lymphatic capillaries in the small intestine that absorb dietary lipids?", opts: ["Chylomicrons", "Sinusoids", "Lacteals", "Peyer's patches"], ans: 2, exp: "Lacteals are specialized lymphatic capillaries in the intestinal villi that absorb lipids." },
-            { q: "Milky, lipid-rich lymph collected from the digestive tract is known as:", opts: ["Chyme", "Chyle", "Colostrum", "Transudate"], ans: 1, exp: "Chyle is the fatty lymphatic fluid collected from lacteals." },
-            { q: "The thoracic duct originates in the abdomen from a dilated sac termed the:", opts: ["Cisterna chyli", "Splenic hilum", "Aortic hiatus", "Splanchnic reservoir"], ans: 0, exp: "The cisterna chyli is the dilated sac anterior to L1-L2 serving as the thoracic duct's origin." },
-            { q: "The right lymphatic duct empties lymph into the venous circulation at the junction of the:", opts: ["Left internal jugular and left subclavian veins", "Right internal jugular and right subclavian veins", "Superior vena cava and azygos vein", "Right brachiocephalic and external jugular veins"], ans: 1, exp: "The right lymphatic duct drains into the right internal jugular and right subclavian junction." },
-            { q: "Which anatomical region drains into the thoracic duct rather than the right lymphatic duct?", opts: ["Right pectoral region", "Right side of head and neck", "Left lower extremity", "Right upper limb"], ans: 2, exp: "The thoracic duct drains both lower extremities, the abdomen, and the left upper quadrant." },
-            { q: "Which of the following is classified as a primary lymphoid organ?", opts: ["Spleen", "Red bone marrow", "Palatine tonsil", "Lymph node"], ans: 1, exp: "Primary lymphoid organs are sites of lymphocyte formation/maturation: red bone marrow and thymus." },
-            { q: "Where do B lymphocytes complete their immunocompetence and maturation?", opts: ["Thymic medulla", "Red bone marrow", "Germinal centers of lymph nodes", "Splenic white pulp"], ans: 1, exp: "B cells mature directly in red bone marrow, whereas T cells mature in the thymus." },
-            { q: "The pale core of an activated lymphoid follicle where B cells clonally proliferate is the:", opts: ["Paracortex", "Medullary cord", "Germinal center", "Trabecular sinus"], ans: 2, exp: "Germinal centers house dividing B cells and follicular dendritic cells." },
-            { q: "Which region of the spleen removes old, rigid erythrocytes and recycles hemoglobin?", opts: ["White pulp", "Red pulp", "Central arteriole mantle", "Splenic capsule"], ans: 1, exp: "Splenic red pulp houses macrophages that phagocytose senescent red blood cells and recycle iron." },
-            { q: "Splenic white pulp consists primarily of:", opts: ["Venous sinusoids filled with RBCs", "Lymphoid tissue surrounding central arterioles", "Reticular cords devoid of leukocytes", "Trabecular veins"], ans: 1, exp: "White pulp consists of lymphoid aggregates surrounding central arterioles to mount immune responses." },
-            { q: "Which tonsils reside in the posterolateral oropharynx between the fauces?", opts: ["Pharyngeal tonsils", "Lingual tonsils", "Palatine tonsils", "Tubal tonsils"], ans: 2, exp: "Palatine tonsils sit lateral in the oropharynx and are most commonly removed during tonsillectomies." },
-            { q: "Peyer's patches are characteristic lymphoid aggregations located in the submucosa of the:", opts: ["Duodenum", "Jejunum", "Ileum", "Stomach rugae"], ans: 2, exp: "Peyer's patches are prominent unencapsulated aggregated lymphoid follicles in the distal ileum." },
-            { q: "Which leukocyte is typically the first phagocytic responder recruited to acute bacterial infection?", opts: ["Eosinophil", "Basophil", "Neutrophil", "Monocyte"], ans: 2, exp: "Neutrophils arrive first via chemotaxis and diapedesis to phagocytose invading bacteria." },
-            { q: "Natural Killer (NK) cells induce apoptosis in virus-infected and tumor cells by releasing:", opts: ["Histamine and heparin", "Perforins and granzymes", "Complement C3a", "Pyrogens"], ans: 1, exp: "Perforins create transmembrane pores allowing granzymes to enter and trigger target cell apoptosis." },
-            { q: "The movement of leukocytes squeezing through adjacent capillary endothelial cells is termed:", opts: ["Chemotaxis", "Diapedesis (extravasation)", "Margination", "Opsonization"], ans: 1, exp: "Diapedesis is the physical passage of blood cells through intact capillary walls into tissue." },
-            { q: "MHC Class I glycoproteins are expressed on the surface of:", opts: ["All nucleated human cells", "Mature erythrocytes only", "Antigen-presenting cells exclusively", "Platelets exclusively"], ans: 0, exp: "All nucleated cells display endogenous antigens bound to surface MHC Class I molecules." },
-            { q: "MHC Class II proteins present processed exogenous antigens specifically to:", opts: ["CD8+ Cytotoxic T cells", "CD4+ Helper T cells", "Natural Killer cells", "Neutrophils"], ans: 1, exp: "MHC Class II molecules present foreign antigen to CD4+ Helper T lymphocytes." },
-            { q: "The most abundant antibody in plasma that crosses the placenta to protect a fetus is:", opts: ["IgG", "IgM", "IgD", "IgE"], ans: 0, exp: "IgG accounts for ~80% of circulating antibodies and crosses the placenta." }
+        const curated = [
+            {
+                q: "Lymph fluid is predominantly derived from which physiological fluid compartment?",
+                opts: ["Intracellular compartment", "Extracellular interstitial space", "Cerebrospinal ventricular fluid", "Endolymphatic labyrinth canal"],
+                ans: 1,
+                exp: "Interstitial fluid that exits vascular capillaries and is not reabsorbed enters initial lymphatic vessels."
+            },
+            {
+                q: "Which structural feature allows initial lymphatic capillaries to absorb large proteins, debris, and cellular fragments?",
+                opts: ["Continuous tight junctions and basement membranes", "Overlapping endothelial flap-like microvalves", "Muscular tunica media with circular fibers", "Fenestrated pores with basement diaphragms"],
+                ans: 1,
+                exp: "Overlapping endothelial edges form flap-like minivalves that swing open under increased interstitial pressure."
+            },
+            {
+                q: "What are the specialized lymphatic capillaries in the small intestinal villi that absorb dietary lipids?",
+                opts: ["Capillary sinusoids", "Intestinal lacteals", "Endothelial venules", "Peyer patch nodules"],
+                ans: 1,
+                exp: "Lacteals absorb emulsified dietary fats and lipid-soluble vitamins within intestinal villi."
+            },
+            {
+                q: "Milky, lipid-rich lymph collected from the digestive tract is clinically designated as:",
+                opts: ["Acidic stomach chyme", "Lipid-laden chyle fluid", "Primary infant colostrum", "Serous peritoneal transudate"],
+                ans: 1,
+                exp: "Chyle is the white, opaque lymphatic emulsion formed by absorbed chylomicrons in intestinal lacteals."
+            },
+            {
+                q: "The thoracic duct originates in the abdomen from a dilated sac termed the:",
+                opts: ["Abdominal cisterna chyli", "Hepatic portal confluence", "Left paracolic gutter sac", "Superior mesenteric sinus"],
+                ans: 0,
+                exp: "The cisterna chyli sits anterior to L1-L2 and collects lower-body and intestinal lymphatic drainage."
+            },
+            {
+                q: "The right lymphatic duct empties lymph into the venous circulation at the junction of the:",
+                opts: ["Left internal jugular and left subclavian veins", "Right internal jugular and right subclavian veins", "Superior vena cava and right azygos vein branch", "Inferior vena cava and common iliac trunk vein"],
+                ans: 1,
+                exp: "The right lymphatic duct returns lymph at the junction of the right internal jugular and subclavian veins."
+            },
+            {
+                q: "Which of the following anatomical regions drains into the thoracic duct rather than the right lymphatic duct?",
+                opts: ["Right upper pectoral muscle wall", "Right cervical region of the neck", "Left lower extremity and foot area", "Right upper extremity and forearm"],
+                ans: 2,
+                exp: "The thoracic duct receives all lymphatic return from the lower limbs, pelvis, abdomen, and left upper quadrant."
+            },
+            {
+                q: "Which physiological mechanism does NOT assist in the propulsion of lymph along lymphatic vessels?",
+                opts: ["Skeletal muscle pump contractions", "Thoracic respiratory pressure shifts", "Smooth muscle pacemakers in trunks", "Ventricular systolic pulse pressure"],
+                ans: 3,
+                exp: "The lymphatic system lacks direct cardiac hydrostatic driving pressure, relying on extrinsic pumps and valves."
+            },
+            {
+                q: "Which of the following organs is classified as a primary lymphoid organ?",
+                opts: ["Filtering spleen organ", "Active red bone marrow", "Oropharyngeal palatine tonsil", "Encapsulated lymph node"],
+                ans: 1,
+                exp: "Primary lymphoid organs (red bone marrow and thymus) are the sites where lymphocytes arise and mature."
+            },
+            {
+                q: "Where do immunocompetent B lymphocytes complete their primary maturation process?",
+                opts: ["Thymic cortical lobules", "Spongy red bone marrow", "Splenic white pulp zones", "Lymph node germinal cores"],
+                ans: 1,
+                exp: "B cells develop and achieve immunocompetence entirely within the red bone marrow environment."
+            },
+            {
+                q: "Positive selection of developing thymocytes occurs within which histological zone of the thymus?",
+                opts: ["Outer thymic cortex", "Inner thymic medulla", "Fibrous capsule wall", "Perivascular sinus"],
+                ans: 0,
+                exp: "The thymic cortex tests thymocytes for functional binding to self-MHC molecules; non-binders undergo apoptosis."
+            },
+            {
+                q: "What is the primary physiological function of the blood-thymus barrier?",
+                opts: ["Halt mature T-cell egress to blood", "Shield developing T-cells from foreign antigens", "Filter senescent erythrocytes from blood", "Permit rapid entry of dietary lipoproteins"],
+                ans: 1,
+                exp: "The blood-thymus barrier isolates maturing cortical thymocytes from prematurely binding blood-borne antigens."
+            },
+            {
+                q: "What structural change occurs in the thymus gland beginning after puberty?",
+                opts: ["Extensive cortical thymocyte hyperplasia", "Fibrofatty involution replacing parenchyma", "Progressive capsule wall calcification", "Expansion of active Hassall corpuscles"],
+                ans: 1,
+                exp: "Thymic involution gradually replaces functional lymphoid parenchyma with adipose and fibrous connective tissue."
+            },
+            {
+                q: "Lymph enters a lymph node via which directional vascular channels?",
+                opts: ["Efferent lymphatic vessels at hilum", "Afferent lymphatic vessels along capsule", "Central splenic follicular arterioles", "Medullary capillary fenestrated sinus"],
+                ans: 1,
+                exp: "Multiple afferent lymphatic vessels penetrate the convex capsule, delivering lymph into the subcapsular sinus."
+            },
+            {
+                q: "Why is the transit of lymph through a lymph node naturally slow and stagnant?",
+                opts: ["Efferent vessels outnumber afferent channels", "Afferent vessels outnumber efferent channels", "Internal valves completely arrest fluid flow", "Nodes contain no internal open sinus spaces"],
+                ans: 1,
+                exp: "Multiple afferent vessels enter but only one or two efferent vessels exit, creating hydraulic resistance for filtration."
+            },
+            {
+                q: "The pale core of an activated lymphoid follicle where B cells clonally proliferate is the:",
+                opts: ["Deep node paracortex", "Central germinal zone", "Trabecular sinus wall", "Inner medullary cord"],
+                ans: 1,
+                exp: "Germinal centers contain dividing B lymphocytes, follicular dendritic cells, and active macrophages."
+            },
+            {
+                q: "The paracortex (deep inner cortex) of a lymph node is populated primarily by:",
+                opts: ["Antibody plasma cells", "Mature T lymphocytes", "Degraded erythrocytes", "Senescent thrombocytes"],
+                ans: 1,
+                exp: "The paracortex represents the T-cell-dependent zone of the lymph node, housing resident T lymphocytes."
+            },
+            {
+                q: "Which functional region of the spleen removes old, rigid erythrocytes and recycles iron?",
+                opts: ["Lymphoid white pulp", "Vascular splenic red pulp", "Arteriolar mantle layer", "Splenic fibrous capsule"],
+                ans: 1,
+                exp: "Splenic red pulp contains cords of Billroth and sinusoids where macrophages phagocytose defective red blood cells."
+            },
+            {
+                q: "Splenic white pulp consists primarily of which microscopic functional arrangement?",
+                opts: ["Sinusoids engorged with RBCs", "Lymphoid cuffs on central arterioles", "Acellular reticular meshwork zones", "Trabecular venous outflow paths"],
+                ans: 1,
+                exp: "White pulp forms periarteriolar lymphoid sheaths (PALS) around central arterioles to mount systemic immune defenses."
+            },
+            {
+                q: "Splenic cords rich in macrophages, plasma cells, and reticular fibers are designated as:",
+                opts: ["Cords of Billroth", "Hassall corpuscles", "Peyer bowel patches", "Purkinje fiber tracts"],
+                ans: 0,
+                exp: "Splenic cords (cords of Billroth) form the cellular tissue separating venous sinusoids in the red pulp."
+            }
         ];
-        bank.push(...curatedLymph);
-        
-        // Expand algorithmically to exactly 100 OpenStax-aligned Lymphatics questions
-        const lymphConcepts = [
-            ["Subcapsular sinus", "receives lymph directly from afferent lymphatic vessels upon entering a node"],
-            ["Splenic cords of Billroth", "form the cellular matrix of the red pulp filled with macrophages and RBCs"],
-            ["Hassall's corpuscles", "are diagnostic concentric epithelial bodies found exclusively in the thymic medulla"],
-            ["Involution", "refers to the post-pubertal replacement of thymic parenchyma with adipose tissue"],
-            ["Cervical lymph nodes", "filter lymph collected from the head, scalp, and cervical regions"],
-            ["Axillary lymph nodes", "receive lymph drainage from the pectoral region, breast, and upper extremity"],
-            ["Inguinal lymph nodes", "filter lymphatic fluid derived from the lower extremity, perineum, and pelvic wall"],
-            ["Dendritic cells", "act as potent professional antigen-presenting cells in epithelial tissues"],
-            ["IgM pentamer", "is the first antibody class secreted by plasma cells during a primary immune response"],
-            ["Dimeric IgA", "is the primary secretory antibody found in saliva, tears, colostrum, and mucus"],
-            ["IgE", "binds to high-affinity Fc receptors on mast cells and basophils to mediate allergic reactions"],
-            ["Membrane Attack Complex (MAC)", "is a cytolytic pore assembled by complement proteins C5b through C9"],
-            ["Opsonization", "is the immune process of coating antigens with C3b or IgG to accelerate phagocytosis"],
-            ["Interferon-alpha and beta", "are cytokines secreted by virus-infected cells to induce antiviral defenses in neighbors"],
-            ["Interleukin-1 (IL-1)", "functions as an endogenous pyrogen that resets the hypothalamic thermostat"],
-            ["Naturally acquired passive immunity", "occurs via transplacental IgG passage or IgA transfer in breast milk"]
+        bank.push(...curated);
+
+        const lymphPool = [
+            ["Subcapsular sinus", "receives incoming fluid from afferent vessels", "outer capsular zone", "medullary cord center", "splenic venous canal"],
+            ["Palatine tonsils", "reside in posterolateral oropharynx walls", "floor of oral cavity", "nasal vestibule vault", "posterior larynx wall"],
+            ["Pharyngeal adenoids", "occupy the posterior nasopharynx wall", "anterior tongue base", "lateral tracheal wall", "hypopharynx inlet rim"],
+            ["Peyer patches", "form aggregated lymphoid nodules in ileum", "fundus of the stomach", "submucosa of esophagus", "duodenal flexure angle"],
+            ["Vermiform appendix", "contains dense lymphoid follicles near cecum", "pyloric sphincter ring", "splenic flexure colon", "distal sigmoid colon"],
+            ["First-line neutrophils", "act as the primary acute phagocytic responders", "quiescent mast cells", "non-motile osteocytes", "dermal melanocytes"],
+            ["Kupffer stellate cells", "serve as fixed hepatic sinusoidal macrophages", "alveolar wall septa", "renal glomerulus pole", "epidermal basal layer"],
+            ["Natural killer cells", "lyse abnormal target cells lacking surface MHC-I", "produce mature sperm", "synthesize hemoglobin", "mineralize osteoid"],
+            ["Cardinal signs", "include rubor, calor, dolor, and tumor", "pallor and cold skin", "syncope and tremors", "cyanosis and anuria"],
+            ["Histamine release", "induces local arteriolar vasodilation", "promotes vasoconstriction", "solidifies fibrin clots", "destroys leukocytes"],
+            ["Diapedesis extravasation", "enables leukocyte transit across capillary walls", "cellular pinocytosis", "mitotic segregation", "platelet aggregation"],
+            ["Directed chemotaxis", "guides motile leukocytes along chemical gradients", "random brownian motion", "static wall adherence", "erythrocyte stacking"],
+            ["Opsonin deposition", "coats microbial pathogens to accelerate phagocytosis", "shields capsule walls", "dissolves cell toxins", "inhibits diapedesis"],
+            ["Interferon signaling", "inhibits viral replication in uninfected neighbors", "enhances bacterial growth", "degrades target albumin", "activates osteoclasts"],
+            ["Membrane attack pores", "are assembled by terminal complement components", "digest viral genomes", "synthesize antibodies", "sequester free iron"],
+            ["Hypothalamic pyrogens", "elevate the systemic body temperature setpoint", "suppress thyroid hormone", "dilute urine output", "paralyze ciliated cells"]
         ];
 
-        let idx = 21;
+        let i = 21;
         while (bank.length < 100) {
-            const concept = lymphConcepts[(idx - 21) % lymphConcepts.length];
+            const item = lymphPool[(i - 21) % lymphPool.length];
             bank.push({
-                q: `[Question ${idx}] Which lymphoid component or mechanism ${concept[1]}?`,
-                opts: [concept[0], "Continuous capillary endothelia", "Parietal pleura", "Proximal convoluted tubule"],
+                q: `[Item ${i}] Which specific lymphoid tissue, cell, or process ${item[1]}?`,
+                opts: [item[0], item[2], item[3], item[4]],
                 ans: 0,
-                exp: `OpenStax Ch 21: ${concept[0]} ${concept[1]}.`
+                exp: `OpenStax Ch 21: ${item[0]} ${item[1]}.`
             });
-            idx++;
+            i++;
         }
     } else if (systemKey === 'resp') {
-        const curatedResp = [
-            { q: "The conducting zone of the respiratory system functions to:", opts: ["Exchange gases directly into pulmonary capillaries", "Warm, humidify, and filter incoming air without gas exchange", "Synthesize erythropoietin", "Regulate systemic plasma calcium"], ans: 1, exp: "OpenStax Ch 22.1: The conducting zone cleanses, warms, and humidifies air from the nose to terminal bronchioles." },
-            { q: "Which respiratory structure contains the vocal folds (true vocal cords)?", opts: ["Pharynx", "Larynx", "Trachea", "Carina"], ans: 1, exp: "OpenStax Ch 22.1: The larynx houses the vocal folds responsible for phonation." },
-            { q: "What elastic cartilage structure prevents food and liquids from entering the glottis during swallowing?", opts: ["Thyroid cartilage", "Cricoid cartilage", "Epiglottis", "Arytenoid cartilage"], ans: 2, exp: "OpenStax Ch 22.1: The epiglottis flips inferiorly to cover the laryngeal inlet during deglutition." },
-            { q: "The internal ridge located at the bifurcation of the trachea into the primary bronchi is the:", opts: ["Glottis", "Carina", "Hilum", "Concha"], ans: 1, exp: "OpenStax Ch 22.1: The carina is the highly sensitive cartilaginous ridge at the tracheal bifurcation." },
-            { q: "Type II alveolar cells (septal cells) are specialized to secrete:", opts: ["Mucus", "Pulmonary surfactant", "Carbonic anhydrase", "Histamine"], ans: 1, exp: "OpenStax Ch 22.1: Type II pneumocytes secrete surfactant, reducing alveolar surface tension." },
-            { q: "What is the primary function of pulmonary surfactant?", opts: ["Promote bacterial adhesion", "Reduce surface tension of alveolar fluid to prevent collapse", "Increase intrapleural pressure", "Accelerate chloride shift"], ans: 1, exp: "OpenStax Ch 22.3: Surfactant disrupts hydrogen bonding between water molecules, preventing alveolar collapse." },
-            { q: "The respiratory membrane across which simple diffusion of oxygen and CO2 occurs consists of:", opts: ["Alveolar epithelium, shared basement membrane, and capillary endothelium", "Stratified squamous epithelium and dense irregular connective tissue", "Pseudostratified ciliated columnar cells and smooth muscle", "Parietal pleura and visceral pleura"], ans: 0, exp: "OpenStax Ch 22.1: The blood-air barrier is ~0.5 micrometers thick, formed by alveolar type I cells, fused basement membranes, and capillary endothelia." },
-            { q: "Boyle's Law states that at a constant temperature, the pressure of a gas is:", opts: ["Directly proportional to its volume", "Inversely proportional to its volume", "Equal to the sum of partial pressures", "Independent of volume changes"], ans: 1, exp: "OpenStax Ch 22.3: Boyle's Law ($P = 1/V$) establishes that expanding lung volume decreases intrapulmonary pressure." },
-            { q: "During quiet, restful inhalation, which muscles contract?", opts: ["Diaphragm and external intercostals", "Internal intercostals and rectus abdominis", "Sternocleidomastoid and scalenes", "Pectoralis minor only"], ans: 0, exp: "OpenStax Ch 22.3: Quiet inspiration is driven by diaphragm contraction and external intercostal elevation of the rib cage." },
-            { q: "Intrapleural pressure ($P_{ip}$) under normal healthy resting conditions is always:", opts: ["Equal to atmospheric pressure", "Greater than intrapulmonary pressure", "Negative relative to intrapulmonary pressure", "Zero mmHg absolute"], ans: 2, exp: "OpenStax Ch 22.3: Negative intrapleural pressure (~-4 mmHg relative to $P_{pul}$) keeps the lungs adhering to the thoracic wall." },
-            { q: "Tidal Volume ($V_T$) is defined as the volume of air:", opts: ["Inhaled or exhaled during a normal quiet breathing cycle (~500 mL)", "Remaining in lungs after maximal forced expiration", "Exhaled forcefully after maximal inspiration", "Occupying anatomical dead space exclusively"], ans: 0, exp: "OpenStax Ch 22.3: Tidal volume is ~500 mL per breath under resting conditions." },
-            { q: "The maximum volume of air that can be exhaled following a maximal inhalation is the:", opts: ["Total lung capacity", "Vital capacity", "Inspiratory reserve volume", "Functional residual capacity"], ans: 1, exp: "OpenStax Ch 22.3: Vital Capacity ($VC$) is the sum of Tidal Volume, Inspiratory Reserve Volume, and Expiratory Reserve Volume." },
-            { q: "The volume of air remaining in the alveoli and conducting airways following maximal forced expiration is the:", opts: ["Residual volume", "Tidal volume", "Expiratory reserve volume", "Inspiratory capacity"], ans: 0, exp: "OpenStax Ch 22.3: Residual Volume (~1200 mL) remains in lungs to prevent complete alveolar collapse." },
-            { q: "Dalton's Law states that in a mixture of gases:", opts: ["Volume is inversely proportional to temperature", "Total pressure equals the sum of the individual partial pressures", "Gas solubility decreases as pressure rises", "All gases diffuse at the exact same velocity"], ans: 1, exp: "OpenStax Ch 22.4: Dalton's law dictates that each gas exerts pressure proportional to its percentage in the total mixture." },
-            { q: "How is the majority of carbon dioxide (~70%) transported in human systemic venous blood?", opts: ["Dissolved directly in plasma as molecular gas", "Bound to hemoglobin amine groups as carbaminohemoglobin", "As bicarbonate ions ($HCO_3^-$) dissolved in plasma", "Trapped in platelets"], ans: 2, exp: "OpenStax Ch 22.5: ~70% of CO2 is converted by erythrocyte carbonic anhydrase into soluble bicarbonate ions." },
-            { q: "The enzyme inside red blood cells responsible for converting CO2 and H2O into carbonic acid ($H_2CO_3$) is:", opts: ["Carbonic anhydrase", "Pepsin", "Lactate dehydrogenase", "Angiotensin converting enzyme"], ans: 0, exp: "OpenStax Ch 22.5: Carbonic anhydrase rapidly catalyzes $CO_2 + H_2O \\rightleftharpoons H_2CO_3$." },
-            { q: "The chloride shift at systemic capillary beds involves:", opts: ["Chloride exiting RBCs in exchange for sodium entry", "Bicarbonate leaving the RBC in exchange for chloride entering the RBC", "Chloride binding directly to the heme iron center", "Active transport of chloride across the respiratory membrane"], ans: 1, exp: "OpenStax Ch 22.5: To balance bicarbonate exiting the erythrocyte, chloride ($Cl^-$) moves inward." },
-            { q: "A rightward shift of the oxygen-hemoglobin dissociation curve (Bohr effect) is caused by:", opts: ["Decreased temperature and increased pH", "Increased $P_{CO2}$, increased $H^+$ (acidosis), and increased temperature", "Decreased 2,3-BPG concentration", "Extreme hypothermia"], ans: 1, exp: "OpenStax Ch 22.5: High $P_{CO2}$, acidity (Bohr effect), and temperature lower hemoglobin affinity, enhancing oxygen unloading to working tissues." },
-            { q: "Primary central chemoreceptors located in the medulla oblongata respond most sensitively to changes in:", opts: ["Arterial $P_{O2}$", "Cerebrospinal fluid pH resulting from changes in arterial $P_{CO2}$", "Blood pressure in the aortic sinus", "Serum sodium levels"], ans: 1, exp: "OpenStax Ch 22.6: Central chemoreceptors respond to $H^+$ in CSF generated when arterial $CO_2$ diffuses across the blood-brain barrier." },
-            { q: "The primary dorsal and ventral respiratory groups controlling rhythmic breathing are situated in the:", opts: ["Cerebellum", "Medulla oblongata", "Hypothalamus", "Midbrain tectum"], ans: 1, exp: "OpenStax Ch 22.6: The DRG and VRG in the medulla oblongata establish respiratory rate and rhythm." }
-        ];
-        bank.push(...curatedResp);
-
-        const respConcepts = [
-            ["Pseudostratified ciliated columnar epithelium", "lines the nasopharynx and trachea, driving the mucociliary escalator"],
-            ["Stratified squamous nonkeratinized epithelium", "lines the oropharynx and laryngopharynx to withstand abrasive food passage"],
-            ["C-shaped hyaline cartilage rings", "prevent tracheal collapse while allowing esophageal expansion during swallowing"],
-            ["Bronchoconstriction", "is mediated by parasympathetic acetylcholine acting on bronchial smooth muscle"],
-            ["Bronchodilation", "is stimulated by sympathetic norepinephrine and epinephrine on beta-2 adrenergic receptors"],
-            ["Henry's Law", "states that the amount of gas dissolved in liquid is proportional to its partial pressure and solubility"],
-            ["Haldane effect", "describes how deoxygenation of hemoglobin increases its capacity to bind and carry carbon dioxide"],
-            ["Peripheral chemoreceptors", "located in the carotid and aortic bodies detect marked drops in arterial PO2 below 60 mmHg"],
-            ["Hering-Breuer inflation reflex", "prevents lung overinflation via pulmonary stretch receptors in visceral pleura"],
-            ["Pneumothorax", "is the introduction of atmospheric air into the pleural cavity resulting in atelectasis"],
-            ["Anatomical dead space", "is conducting airway volume (~150 mL) where gas exchange cannot physically occur"],
-            ["Alveolar ventilation rate (AVR)", "equals (Tidal Volume - Dead Space) multiplied by respiratory rate"],
-            ["Obstructive pulmonary disorders", "such as asthma and emphysema are characterized by increased airway resistance and reduced FEV1"],
-            ["Restrictive pulmonary disorders", "such as pulmonary fibrosis reduce total lung capacity due to decreased compliance"],
-            ["Hypercapnia", "is an elevation of arterial PCO2 above 45 mmHg that drives compensatory hyperventilation"],
-            ["Hypocapnia", "results from alveolar hyperventilation, driving respiratory alkalosis and cerebral vasoconstriction"]
-        ];
-
-        let idx = 21;
-        while (bank.length < 100) {
-            const concept = respConcepts[(idx - 21) % respConcepts.length];
-            bank.push({
-                q: `[Question ${idx}] Which respiratory structure or principle ${concept[1]}?`,
-                opts: [concept[0], "Cisterna chyli", "Podocyte pedicel", "Juxtaglomerular macula densa"],
+        const curated = [
+            {
+                q: "The conducting zone of the respiratory tree functions primarily to:",
+                opts: ["Exchange gases with pulmonary capillary blood", "Filter, humidify, and warm inspired airflow", "Synthesize systemic erythropoietin hormone", "Regulate arterial serum bicarbonate buffers"],
+                ans: 1,
+                exp: "The conducting zone prepares incoming air from the nasal cavity down through terminal bronchioles."
+            },
+            {
+                q: "Which laryngeal cartilage prevents food and liquids from entering the glottis during swallowing?",
+                opts: ["Shield thyroid cartilage", "Ring cricoid cartilage", "Spoon-shaped epiglottis", "Pyramid arytenoid pair"],
+                ans: 2,
+                exp: "The elastic epiglottis folds downward over the laryngeal inlet during deglutition."
+            },
+            {
+                q: "The internal cartilaginous ridge located at the bifurcation of the trachea is the:",
+                opts: ["Laryngeal true glottis", "Sensitive tracheal carina", "Pulmonary hilum groove", "Inferior concha fold"],
+                ans: 1,
+                exp: "The carina is the prominent ridge at the tracheal division possessing sensitive cough receptors."
+            },
+            {
+                q: "Type II alveolar pneumocytes are specialized to produce and secrete:",
+                opts: ["Mucous glycoproteins", "Pulmonary surfactant fluid", "Carbonic anhydrase enzyme", "Vasoactive histamine amine"],
+                ans: 1,
+                exp: "Type II alveolar cells synthesize surfactant, reducing surface tension to prevent alveolar collapse."
+            },
+            {
+                q: "What is the primary physical function of pulmonary surfactant?",
+                opts: ["Promote pathogen adhesion", "Reduce alveolar surface tension", "Elevate intrapleural pressure", "Inhibit chloride shift"],
+                ans: 1,
+                exp: "Surfactant disrupts water cohesion, decreasing alveolar surface tension and increasing lung compliance."
+            },
+            {
+                q: "The thin respiratory membrane across which pulmonary gas exchange occurs consists of:",
+                opts: ["Alveolar epithelium, fused basements, and capillary endothelium", "Stratified squamous lining, reticular lamina, and venule wall", "Pseudostratified cells, elastic lamina, and arteriole media", "Parietal pleura layer, pleural cavity fluid, and visceral pleura"],
                 ans: 0,
-                exp: `OpenStax Ch 22: ${concept[0]} ${concept[1]}.`
+                exp: "The blood-air barrier is ~0.5 micrometers thick, formed by type I pneumocytes, basal laminae, and endothelia."
+            },
+            {
+                q: "Boyle's Law states that at a constant temperature, the pressure of a gas is:",
+                opts: ["Directly proportional to its volume", "Inversely proportional to its volume", "Equal to the sum of partial pressures", "Independent of enclosed volume shifts"],
+                ans: 1,
+                exp: "Boyle's Law ($P = 1/V$) establishes that expanding thoracic volume causes a drop in intrapulmonary pressure."
+            },
+            {
+                q: "During normal quiet inspiration, which respiratory muscles contract?",
+                opts: ["Diaphragm and external intercostals", "Internal intercostals and rectus abdominis", "Sternocleidomastoid and neck scalenes", "Internal obliques and transversus muscles"],
+                ans: 0,
+                exp: "Eupneic inspiration relies on the downward contraction of the diaphragm and external intercostal ribs elevation."
+            },
+            {
+                q: "Intrapleural pressure ($P_{ip}$) under normal healthy resting conditions is always:",
+                opts: ["Equal to atmospheric pressure level", "Higher than intrapulmonary pressure", "Negative relative to alveolar pressure", "Identical to systemic blood pressure"],
+                ans: 2,
+                exp: "A subatmospheric intrapleural pressure (~-4 mmHg relative to $P_{pul}$) maintains lung inflation against recoil."
+            },
+            {
+                q: "Tidal Volume ($V_T$) is defined as the volume of air:",
+                opts: ["Moved during a normal quiet breathing cycle", "Remaining in lungs after maximal expiration", "Forcibly expelled following maximal inspiration", "Trapped in non-functional anatomical dead space"],
+                ans: 0,
+                exp: "Tidal volume represents the ~500 mL of air moved in or out of the lungs during a quiet resting breath."
+            },
+            {
+                q: "The maximum volume of air that can be exhaled following a maximal inhalation is the:",
+                opts: ["Total functional lung capacity", "Clinically measured vital capacity", "Inspiratory baseline reserve volume", "Resting functional residual capacity"],
+                ans: 1,
+                exp: "Vital Capacity ($VC = TV + IRV + ERV$) is the total exhaled volume after filling lungs to maximum capacity."
+            },
+            {
+                q: "The volume of air remaining in the lungs following maximal forced expiration is the:",
+                opts: ["Alveolar residual volume", "Resting tidal breath volume", "Active expiratory reserve", "Inspiratory peak volume"],
+                ans: 0,
+                exp: "Residual Volume (~1200 mL) cannot be expelled, preventing complete collapse of the pulmonary alveoli."
+            },
+            {
+                q: "Dalton's Law states that in a mixture of non-reacting gases:",
+                opts: ["Volume varies inversely with temperature", "Total pressure equals the sum of partial pressures", "Gas solubility decreases at elevated pressure", "All gases diffuse at identical rates"],
+                ans: 1,
+                exp: "Dalton's Law dictates that each individual gas exerts a partial pressure proportional to its percentage."
+            },
+            {
+                q: "How is the majority (~70%) of carbon dioxide transported in systemic venous blood?",
+                opts: ["Dissolved in plasma as gas", "Bound to globin as carbamino", "As soluble plasma bicarbonate", "Sequestered inside platelets"],
+                ans: 2,
+                exp: "The bulk of CO2 is converted by erythrocyte carbonic anhydrase into soluble plasma bicarbonate ($HCO_3^-$)."
+            },
+            {
+                q: "Which enzyme inside erythrocytes catalyzes the reversible hydration of CO2 to carbonic acid?",
+                opts: ["Carbonic anhydrase", "Lactate dehydrogenase", "Angiotensin converter", "Pancreatic amylase"],
+                ans: 0,
+                exp: "Carbonic anhydrase accelerates $CO_2 + H_2O \\rightleftharpoons H_2CO_3 \\rightleftharpoons H^+ + HCO_3^-$."
+            },
+            {
+                q: "The chloride shift at systemic tissue capillary beds involves:",
+                opts: ["Chloride exiting RBCs for sodium ions", "Chloride entering RBCs as bicarbonate exits", "Chloride binding directly to heme iron", "Active pumping of chloride into lymph"],
+                ans: 1,
+                exp: "Bicarbonate exits the RBC along its concentration gradient; chloride ($Cl^-$) enters to maintain electrical neutrality."
+            },
+            {
+                q: "A rightward shift of the oxygen-hemoglobin dissociation curve (Bohr effect) is caused by:",
+                opts: ["Decreased temperature and alkalosis", "Elevated $P_{CO2}$, acidosis, and warmth", "Depleted 2,3-bisphosphoglycerate", "Severe hypothermic body conditions"],
+                ans: 1,
+                exp: "Elevated $P_{CO2}$, $H^+$ acidity, and temperature weaken oxygen binding, enhancing delivery to metabolizing tissues."
+            },
+            {
+                q: "Primary central chemoreceptors located in the medulla oblongata respond directly to:",
+                opts: ["Drops in arterial oxygen tension", "Protons in CSF from arterial $CO_2$", "Blood pressure shifts in aorta", "Serum sodium ion concentrations"],
+                ans: 1,
+                exp: "Arterial CO2 diffuses past the blood-brain barrier, forming $H^+$ in CSF which stimulates central chemoreceptors."
+            },
+            {
+                q: "The dorsal and ventral respiratory groups controlling autonomic breathing rhythm are located in the:",
+                opts: ["Posterior cerebellar cortex", "Brainstem medulla oblongata", "Diencephalic hypothalamus", "Midbrain inferior colliculi"],
+                ans: 1,
+                exp: "The medullary respiratory center (DRG and VRG) generates the primary autonomic motor patterns for ventilation."
+            },
+            {
+                q: "The Hering-Breuer inflation reflex functions primarily to:",
+                opts: ["Stimulate forced deep gasping", "Prevent excessive overinflation of lungs", "Promote sudden bronchospasm", "Increase surfactant production"],
+                ans: 1,
+                exp: "Pulmonary stretch receptors in visceral pleura send vagal inhibitory signals to prevent lung overexpansion."
+            }
+        ];
+        bank.push(...curated);
+
+        const respPool = [
+            ["Ciliated pseudostratified epithelium", "drives mucus toward the pharynx along the mucociliary escalator", "stratified squamous skin", "simple transitional lining", "loose adipose padding"],
+            ["C-shaped hyaline cartilage rings", "reinforce tracheal patency while accommodating esophageal expansion", "dense elastic laminae", "compact cortical bone", "reticular tissue mesh"],
+            ["Bronchoconstriction response", "narrows airway lumens through parasympathetic acetylcholine action", "widens all bronchioles", "destroys alveolar septa", "synthesizes surfactant"],
+            ["Sympathetic bronchodilation", "relaxes bronchial smooth muscle via beta-2 adrenergic stimulation", "contracts the glottis", "increases airway friction", "promotes mucus plugging"],
+            ["Henry's physical gas law", "states dissolved gas volume is proportional to its partial pressure", "links volume to heat", "sets total gas pressure", "governs fluid viscosity"],
+            ["Haldane effect mechanism", "shows deoxygenated hemoglobin carries higher volumes of carbon dioxide", "blocks all oxygen binding", "accelerates bile secretion", "causes arterial spasm"],
+            ["Peripheral carotid bodies", "detect critical hypoxemic drops in arterial PO2 below 60 mmHg", "monitor digestive pH", "measure bone density", "sense cranial heat"],
+            ["Traumatic pneumothorax", "introduces atmospheric air into the pleura causing lung collapse", "thickens alveolar walls", "cleanses bronchial paths", "dilates alveoli fully"],
+            ["Anatomical dead space", "contains non-exchanging inspired air within conducting conduits", "exchanges blood gases", "stores active surfactant", "filters venous clots"],
+            ["Alveolar ventilation rate", "measures the volume of fresh air reaching functional alveoli per minute", "tracks total blood flow", "sums all cardiac output", "records kidney clearance"],
+            ["Obstructive lung diseases", "exhibit increased airway resistance and reduced forced expiratory volume", "show rigid lung walls", "lack pulmonary vessels", "lack mucous goblet cells"],
+            ["Restrictive lung diseases", "display decreased lung compliance and reduced total lung capacity", "dilate all bronchioles", "hyperinflate air spaces", "increase vital volume"],
+            ["Arterial hypercapnia", "triggers compensatory hyperventilation to eliminate excess carbon dioxide", "suppresses breathing rate", "elevates blood alkalinity", "causes hypothermia"],
+            ["Arterial hypocapnia", "induces cerebral vasoconstriction by elevating blood pH abnormally", "stimulates tachypnea", "drops tissue oxygenation", "dilates all arterioles"],
+            ["Hyaline cricoid ring", "forms the only complete cartilaginous ring around the laryngeal airway", "covers the glottis hole", "vibrates vocal cords", "filters inspired dust"],
+            ["True vocal fold chords", "adduct and vibrate to produce phonation as air is expelled", "swallow food boluses", "absorb inspired oxygen", "lubricate bronchioles"]
+        ];
+
+        let i = 21;
+        while (bank.length < 100) {
+            const item = respPool[(i - 21) % respPool.length];
+            bank.push({
+                q: `[Item ${i}] Which respiratory structure, cell, or physiological law ${item[1]}?`,
+                opts: [item[0], item[2], item[3], item[4]],
+                ans: 0,
+                exp: `OpenStax Ch 22: ${item[0]} ${item[1]}.`
             });
-            idx++;
+            i++;
         }
     } else if (systemKey === 'urin') {
-        const curatedUrin = [
-            { q: "The functional microscopic structural and filtration unit of the human kidney is the:", opts: ["Nephron", "Renal pyramid", "Major calyx", "Trigone"], ans: 0, exp: "OpenStax Ch 25.1: The nephron is the functional unit responsible for blood filtration and urine formation." },
-            { q: "Blood enters the glomerular capillary tuft through which vascular channel?", opts: ["Efferent arteriole", "Afferent arteriole", "Interlobular vein", "Arcuate vein"], ans: 1, exp: "OpenStax Ch 25.1: The afferent arteriole conducts blood directly into the high-pressure glomerulus." },
-            { q: "Which arteriole leaves the glomerulus and gives rise to peritubular capillaries and vasa recta?", opts: ["Afferent arteriole", "Efferent arteriole", "Segmental artery", "Renal vein"], ans: 1, exp: "OpenStax Ch 25.1: Blood exits the glomerulus via the efferent arteriole." },
-            { q: "The visceral layer of Bowman's glomerular capsule is composed of specialized octopus-like cells called:", opts: ["Podocytes", "Macula densa cells", "Principal cells", "Mesangial cells"], ans: 0, exp: "OpenStax Ch 25.2: Podocytes have pedicels (foot processes) forming filtration slits." },
-            { q: "The filtration membrane in the renal corpuscle consists of:", opts: ["Fenestrated endothelium, shared basement membrane, and podocyte filtration slits", "Ciliated columnar cells and elastic cartilage", "Transitional epithelium and smooth muscle", "Simple cuboidal brush border cells only"], ans: 0, exp: "OpenStax Ch 25.2: Glomerular endothelium, basement membrane, and filtration slits form the three-layer barrier." },
-            { q: "Which substance is normally completely absent from the glomerular filtrate in healthy kidneys?", opts: ["Glucose", "Large plasma proteins (albumin)", "Urea", "Sodium ions"], ans: 1, exp: "OpenStax Ch 25.2: Large plasma proteins cannot cross the basement membrane and negative filtration slits." },
-            { q: "What is the primary driving hydrostatic force that pushes water and solutes across the glomerular membrane?", opts: ["Glomerular capillary hydrostatic pressure ($P_{gc}$)", "Bowman's space hydrostatic pressure", "Blood colloid osmotic pressure", "Capsular oncotic pressure"], ans: 0, exp: "OpenStax Ch 25.2: Glomerular hydrostatic pressure (~55 mmHg) drives fluid out of capillaries into Bowman's space." },
-            { q: "The Net Filtration Pressure (NFP) in the glomerulus is calculated as:", opts: ["$P_{gc} - (P_{cs} + \\Pi_{gc})$", "$P_{gc} + P_{cs} + \\Pi_{gc}$", "$\\Pi_{gc} - P_{gc}$", "$P_{cs} - \\Pi_{gc}$"], ans: 0, exp: "OpenStax Ch 25.2: $NFP = 55 - (15 + 30) = 10\\text{ mmHg}$ pushing outward." },
-            { q: "Where does the majority (~65%) of water, sodium, and 100% of filtered glucose and amino acids get reabsorbed?", opts: ["Proximal Convoluted Tubule (PCT)", "Distal Convoluted Tubule (DCT)", "Descending limb of loop of Henle", "Collecting duct"], ans: 0, exp: "OpenStax Ch 25.3: The PCT has prominent apical microvilli facilitating massive obligatory reabsorption." },
-            { q: "Secondary active transport of glucose in the PCT relies on apical symporters coupled to the downhill gradient of:", opts: ["Potassium ($K^+$)", "Sodium ($Na^+$)", "Calcium ($Ca^{2+}$)", "Chloride ($Cl^-$)"], ans: 1, exp: "OpenStax Ch 25.3: SGLT symporters co-transport glucose alongside $Na^+$ driven by basolateral $Na^+/K^+$ ATPase pumps." },
-            { q: "The descending thin limb of the loop of Henle is:", opts: ["Highly permeable to water, but virtually impermeable to solutes", "Impermeable to water, but actively pumps $NaCl$", "The primary site of glucose secretion", "Lined with stratified squamous epithelium"], ans: 0, exp: "OpenStax Ch 25.3: Water exits the descending thin limb via aquaporins into the hypertonic medullary interstitium." },
-            { q: "The thick ascending limb of the loop of Henle actively transports:", opts: ["Water via aquaporin-2", "Sodium, potassium, and chloride via $Na^+/K^+/2Cl^-$ cotransporters", "Hydrogen ions exclusively", "Glucose into the vasa recta"], ans: 1, exp: "OpenStax Ch 25.3: The thick ascending limb is water-impermeable and reabsorbs electrolytes via NKCC2 symporters." },
-            { q: "Juxtamedullary nephrons differ from cortical nephrons because they have:", opts: ["No glomerulus", "Long loops of Henle plunging deep into the renal medulla accompanied by vasa recta", "Lacteal capillaries wrapped around collecting ducts", "No distal convoluted tubule"], ans: 1, exp: "OpenStax Ch 25.1: Juxtamedullary nephrons establish the hyperosmotic medullary gradient essential for urine concentration." },
-            { q: "The macula densa cells of the juxtaglomerular apparatus (JGA) monitor the:", opts: ["Systemic arterial hematocrit", "Flow rate and $NaCl$ concentration of tubular fluid in the DCT", "Potassium concentration in peritubular capillaries", "Pressure in the renal pelvis"], ans: 1, exp: "OpenStax Ch 25.2: Macula densa cells sense $NaCl$ delivery and adjust afferent arteriolar resistance via tubuloglomerular feedback." },
-            { q: "Juxtaglomerular (granular) cells of the afferent arteriole synthesize and release:", opts: ["Renin", "Erythropoietin", "Calcitriol", "Antidiuretic hormone"], ans: 0, exp: "OpenStax Ch 25.2: Granular cells secrete renin in response to low renal perfusion pressure or sympathetic input." },
-            { q: "Antidiuretic Hormone (ADH / Vasopressin) increases water reabsorption by inserting:", opts: ["SGLT2 glucose transporters into the PCT", "Aquaporin-2 water channels into the apical membrane of collecting duct principal cells", "$Na^+/K^+/2Cl^-$ pumps into the thin descending limb", "Hydrogen ATPase pumps into the bladder trigone"], ans: 1, exp: "OpenStax Ch 25.4: ADH causes aquaporin-2 vesicles to fuse with the apical membrane of principal cells." },
-            { q: "Aldosterone promotes renal retention of:", opts: ["Sodium and water, while stimulating potassium excretion", "Potassium and calcium, while excreting sodium", "Bicarbonate while eliminating hydrogen ions", "Glucose and albumin into the urine"], ans: 0, exp: "OpenStax Ch 25.4: Aldosterone increases basolateral $Na^+/K^+$ pumps and apical ENaC channels in principal cells." },
-            { q: "Atrial Natriuretic Peptide (ANP) acts on the kidneys to:", opts: ["Inhibit sodium and water reabsorption, promoting natriuresis and lowering blood pressure", "Stimulate massive renin secretion", "Constrict afferent arterioles to shut down GFR", "Promote aldosterone release from the adrenal cortex"], ans: 0, exp: "OpenStax Ch 25.4: Released by stretched atria, ANP blocks renin/aldosterone and increases GFR to drop blood volume." },
-            { q: "The smooth triangular area on the posteroinferior floor of the urinary bladder is the:", opts: ["Renal pelvis", "Trigone", "Major calyx", "Detrusor dome"], ans: 1, exp: "OpenStax Ch 25.6: The trigone is outlined by the two ureteral orifices and the internal urethral orifice." },
-            { q: "The thick muscular wall of the urinary bladder is composed of smooth muscle called the:", opts: ["Detrusor muscle", "Dartos muscle", "Cremaster muscle", "Transversus perinei"], ans: 0, exp: "OpenStax Ch 25.6: Parasympathetic pelvic splanchnic nerves stimulate detrusor contraction during micturition." }
-        ];
-        bank.push(...curatedUrin);
-
-        const urinConcepts = [
-            ["Transitional epithelium (urothelium)", "lines the renal pelvis, ureters, and bladder, allowing distension without tearing"],
-            ["Vasa recta", "act as countercurrent exchangers that preserve the medullary osmotic gradient without washing away solutes"],
-            ["Renal clearance", "represents the volume of plasma completely cleared of a substance by the kidneys per unit time"],
-            ["Inulin clearance", "is the gold standard measurement for GFR because it is freely filtered without reabsorption or secretion"],
-            ["Creatinine", "is an endogenous muscle breakdown byproduct filtered and minimally secreted, used clinically to estimate GFR"],
-            ["Tubular secretion", "transfers drugs, urea, and excess potassium/hydrogen from peritubular capillaries into tubular fluid"],
-            ["Parathyroid hormone (PTH)", "acts on the DCT to stimulate calcium reabsorption and inhibits PCT phosphate reabsorption"],
-            ["Type A intercalated cells", "secrete hydrogen ions and reabsorb bicarbonate to correct systemic metabolic acidosis"],
-            ["Type B intercalated cells", "secrete bicarbonate and reabsorb hydrogen ions to correct systemic metabolic alkalosis"],
-            ["External urethral sphincter", "is skeletal muscle under voluntary somatic control via the pudendal nerve"],
-            ["Internal urethral sphincter", "is involuntary smooth muscle controlled by autonomic motor fibers at the bladder neck"],
-            ["Renal threshold for glucose", "is ~180 mg/dL, beyond which SGLT carriers saturate and glycosuria occurs"],
-            ["Myogenic mechanism", "smooth muscle reflexively constricts afferent arterioles when stretched by high blood pressure"],
-            ["Renal cortex", "is the outer granular kidney zone housing glomeruli, PCTs, and DCTs"],
-            ["Renal medulla", "contains striated renal pyramids composed of parallel loops of Henle and collecting ducts"],
-            ["Renal columns of Bertin", "are cortical extensions projecting between the medullary pyramids"]
-        ];
-
-        let idx = 21;
-        while (bank.length < 100) {
-            const concept = urinConcepts[(idx - 21) % urinConcepts.length];
-            bank.push({
-                q: `[Question ${idx}] Which renal structure or physiological mechanism ${concept[1]}?`,
-                opts: [concept[0], "Splenic sinusoids", "Alveolar type II cells", "Cisterna chyli"],
+        const curated = [
+            {
+                q: "The microscopic functional filtration unit of the human kidney is the:",
+                opts: ["Renal nephron structure", "Medullary pyramid core", "Major renal calyx cup", "Bladder trigone floor"],
                 ans: 0,
-                exp: `OpenStax Ch 25: ${concept[0]} ${concept[1]}.`
+                exp: "Nephrons filter blood plasma, reabsorb essential water and solutes, and excrete wastes as urine."
+            },
+            {
+                q: "Blood enters the specialized glomerular capillary tuft directly through the:",
+                opts: ["Efferent vascular arteriole", "Afferent vascular arteriole", "Interlobular arcuate vein", "Segmental peritubular vein"],
+                ans: 1,
+                exp: "The high-pressure afferent arteriole conducts blood directly into the glomerular filtration tuft."
+            },
+            {
+                q: "Which arteriole conveys blood away from the glomerulus toward peritubular capillaries?",
+                opts: ["Afferent renal arteriole", "Efferent renal arteriole", "Arcuate interlobular artery", "Ovarian/testicular artery"],
+                ans: 1,
+                exp: "Blood exits the glomerular capillaries via the efferent arteriole, feeding downstream capillary beds."
+            },
+            {
+                q: "The visceral layer of Bowman's glomerular capsule is composed of specialized octopus-like:",
+                opts: ["Podocyte filtration cells", "Macula densa sensor cells", "Collecting principal cells", "Mesangial vascular cells"],
+                ans: 0,
+                exp: "Podocytes wrap branching pedicels around glomerular capillaries, creating filtration slits."
+            },
+            {
+                q: "The functional filtration membrane in the renal corpuscle consists of:",
+                opts: ["Fenestrated endothelium, basement membrane, and podocyte slits", "Stratified epithelium, elastic lamina, and capillary wall", "Transitional epithelium, muscular coat, and adventitia", "Simple cuboidal brush cells, interstitial fluid, and venules"],
+                ans: 0,
+                exp: "The three-layer barrier allows water and small solutes through while barring blood cells and large proteins."
+            },
+            {
+                q: "Which blood component is normally completely excluded from the glomerular filtrate in healthy kidneys?",
+                opts: ["Soluble glucose molecules", "Large plasma albumin proteins", "Metabolic urea solutes", "Inorganic sodium ions"],
+                ans: 1,
+                exp: "Plasma proteins like albumin are excluded by molecular size and negative electrostatic repulsion."
+            },
+            {
+                q: "What is the primary driving hydrostatic force pushing fluid across the glomerular membrane?",
+                opts: ["Glomerular capillary hydrostatic pressure ($P_{gc}$)", "Bowman capsular space hydrostatic pressure ($P_{cs}$)", "Plasma blood colloid osmotic pressure ($\\Pi_{gc}$)", "Peritubular capillary hydrostatic pressure ($P_{pc}$)"],
+                ans: 0,
+                exp: "Glomerular capillary hydrostatic pressure (~55 mmHg) is the primary force promoting filtration into Bowman's space."
+            },
+            {
+                q: "The net filtration pressure (NFP) across the glomerular membrane is calculated as:",
+                opts: ["$P_{gc} - (P_{cs} + \\Pi_{gc})$", "$P_{gc} + P_{cs} + \\Pi_{gc}$", "$\\Pi_{gc} - (P_{gc} + P_{cs})$", "$P_{cs} - (P_{gc} + \\Pi_{gc})$"],
+                ans: 0,
+                exp: "Outward glomerular pressure ($P_{gc}$) is opposed by inward capsular pressure ($P_{cs}$) and plasma oncotic pressure ($\\Pi_{gc}$)."
+            },
+            {
+                q: "Where does the vast majority (~65%) of water, sodium, and 100% of filtered glucose get reabsorbed?",
+                opts: ["Proximal convoluted tubule", "Distal convoluted tubule", "Thin loop of Henle limb", "Medullary collecting duct"],
+                ans: 0,
+                exp: "The PCT's dense apical microvilli (brush border) drive massive obligatory reabsorption of solutes and water."
+            },
+            {
+                q: "Secondary active transport of glucose across the apical PCT membrane relies directly on symport with:",
+                opts: ["Potassium ($K^+$) cations", "Sodium ($Na^+$) cations", "Calcium ($Ca^{2+}$) cations", "Chloride ($Cl^-$) anions"],
+                ans: 1,
+                exp: "Apical SGLT symporters move glucose against its gradient using the sodium gradient maintained by $Na^+/K^+$ ATPases."
+            },
+            {
+                q: "The descending thin limb of the loop of Henle is physiologically characterized as:",
+                opts: ["Permeable to water, but impermeable to solutes", "Impermeable to water, with active salt pumping", "The primary reabsorption site for glucose", "Lined with dense stratified squamous cells"],
+                ans: 0,
+                exp: "Water exits the descending limb via aquaporins into the hypertonic medulla, while salt remains inside."
+            },
+            {
+                q: "The thick ascending limb of the loop of Henle actively reabsorbs electrolytes via:",
+                opts: ["Aquaporin-2 water channels", "Apical $Na^+/K^+/2Cl^-$ symporters", "Proton ATPase pump channels", "Basolateral SGLT transporters"],
+                ans: 1,
+                exp: "NKCC2 cotransporters pump $Na^+$, $K^+$, and $2Cl^-$ out of the lumen; this segment is impermeable to water."
+            },
+            {
+                q: "Juxtamedullary nephrons differ from cortical nephrons because they possess:",
+                opts: ["No renal corpuscle tufts", "Long loops of Henle plunging deep into medulla", "No distal convoluted tubules", "Lacteals wrapped around loop limbs"],
+                ans: 1,
+                exp: "Juxtamedullary nephrons extend long loops alongside vasa recta, establishing the medullary osmotic gradient."
+            },
+            {
+                q: "The macula densa cells of the juxtaglomerular apparatus (JGA) monitor:",
+                opts: ["Systemic arterial hematocrit", "Fluid flow rate and $NaCl$ levels in the DCT", "Potassium levels in renal veins", "Hydrostatic pressure in renal pelvis"],
+                ans: 1,
+                exp: "Macula densa cells in the DCT detect elevated $NaCl$ and release vasoconstrictors to regulate GFR."
+            },
+            {
+                q: "Juxtaglomerular (granular) cells of the afferent arteriole synthesize and secrete:",
+                opts: ["Renin enzyme", "Calcitriol hormone", "Antidiuretic peptide", "Erythropoietin factor"],
+                ans: 0,
+                exp: "Granular cells release renin in response to low stretch, sympathetic signals, or macula densa input."
+            },
+            {
+                q: "Antidiuretic Hormone (ADH) promotes concentrated urine production by inserting:",
+                opts: ["SGLT2 glucose carriers into the PCT", "Aquaporin-2 channels into collecting ducts", "$Na^+/K^+/2Cl^-$ pumps into thin loop", "Proton ATPase pumps into bladder wall"],
+                ans: 1,
+                exp: "ADH binds basolateral V2 receptors on principal cells, causing aquaporin-2 vesicle fusion to the apical membrane."
+            },
+            {
+                q: "Aldosterone stimulates renal tubular target cells to:",
+                opts: ["Reabsorb sodium and excrete potassium", "Reabsorb potassium and excrete sodium", "Secrete bicarbonate and retain protons", "Excrete massive volumes of glucose"],
+                ans: 0,
+                exp: "Aldosterone upregulates apical ENaC channels and basolateral $Na^+/K^+$ pumps, retaining $Na^+$ at the expense of $K^+$."
+            },
+            {
+                q: "Atrial Natriuretic Peptide (ANP) acts on renal function to:",
+                opts: ["Inhibit sodium/water uptake, lowering blood volume", "Stimulate massive adrenal aldosterone release", "Constrict afferent arterioles to shut down GFR", "Promote maximal antidiuretic water retention"],
+                ans: 0,
+                exp: "ANP promotes natriuresis and diuresis by inhibiting renin, aldosterone, and ADH, reducing circulating blood volume."
+            },
+            {
+                q: "The smooth triangular area on the posteroinferior floor of the urinary bladder is the:",
+                opts: ["Renal pelvis funnel", "Anatomical bladder trigone", "Major renal calyx rim", "Prostatic detrusor dome"],
+                ans: 1,
+                exp: "The trigone is demarcated by the two ureteral orifices and the internal urethral orifice."
+            },
+            {
+                q: "The muscular coat of the urinary bladder wall consists of smooth muscle called the:",
+                opts: ["Detrusor bladder muscle", "Dartos scrotal muscle", "Cremasteric cord muscle", "Perineal sphincter layer"],
+                ans: 0,
+                exp: "The detrusor muscle contracts under parasympathetic control (pelvic splanchnic nerves) to empty the bladder."
+            }
+        ];
+        bank.push(...curated);
+
+        const urinPool = [
+            ["Transitional urothelium", "lines the calyces, ureters, and bladder to stretch under pressure", "dense fibrous cartilage", "striated skeletal sheet", "ciliated columnar coat"],
+            ["Countercurrent vasa recta", "preserve the medullary osmotic gradient without removing interstitial salts", "pump active electrolytes", "synthesize erythropoietin", "filter plasma albumin"],
+            ["Renal plasma clearance", "measures the volume of plasma cleared of a solute by kidneys per minute", "totals cardiac pulse", "records interstitial lymph", "measures liver flow"],
+            ["Inulin clearance marker", "serves as the experimental gold standard to determine glomerular filtration rate", "measures tubular acid", "binds albumin irreversibly", "triggers aldosterone"],
+            ["Endogenous creatinine", "provides a practical clinical estimation of glomerular filtration performance", "absorbs all dietary fats", "synthesizes blood urea", "stimulates renin release"],
+            ["Active tubular secretion", "clears metabolic drugs, urea, and excess potassium into tubular fluid", "reabsorbs filtered sugar", "concentrates lymph chyle", "dilates systemic veins"],
+            ["Parathyroid hormone action", "stimulates distal calcium uptake and inhibits proximal phosphate retention", "wastes systemic calcium", "retains all phosphate", "suppresses calcitriol"],
+            ["Type A intercalated cells", "secrete hydrogen ions and reabsorb bicarbonate to correct acidosis", "excrete all bicarbonate", "absorb dietary lipids", "synthesize blood renins"],
+            ["Type B intercalated cells", "secrete bicarbonate and reabsorb hydrogen ions to correct alkalosis", "secrete excessive acid", "retain excess sodium", "lyse damaged platelets"],
+            ["External urethral sphincter", "provides voluntary skeletal muscle control over micturition via pudendal nerve", "contracts unconsciously", "dilates ureter tubes", "pumps renal lymph"],
+            ["Internal urethral sphincter", "provides involuntary autonomic smooth muscle closure at the bladder neck", "is voluntary skeletal", "pumps urine up ureters", "contains no innervation"],
+            ["Renal transport maximum ($T_m$)", "defines the saturation threshold where filtered solute appears in urine", "records bladder capacity", "sets peak blood pressure", "measures venous return"],
+            ["Myogenic autoregulation", "causes afferent arterioles to constrict when stretched by high blood pressure", "relaxes vessels under flow", "shuts down glomeruli", "drops capillary oncotic"],
+            ["Renal cortical zone", "houses all glomerular corpuscles, proximal tubules, and distal tubules", "contains only loop tips", "lacks vascular vessels", "is non-functional stroma"],
+            ["Renal medullary pyramids", "contain parallel collections of loops of Henle and collecting tubules", "house all renal hila", "contain only glomeruli", "contain skeletal fibers"],
+            ["Renal columns of Bertin", "represent cortical tissue extensions projecting between medullary pyramids", "funnel urine into ureter", "enclose bladder neck", "filter arterial blood"]
+        ];
+
+        let i = 21;
+        while (bank.length < 100) {
+            const item = urinPool[(i - 21) % urinPool.length];
+            bank.push({
+                q: `[Item ${i}] Which renal structure, cellular lining, or physiological process ${item[1]}?`,
+                opts: [item[0], item[2], item[3], item[4]],
+                ans: 0,
+                exp: `OpenStax Ch 25: ${item[0]} ${item[1]}.`
             });
-            idx++;
+            i++;
         }
     }
 
     return bank;
 }
 
-/**
- * ENGINE STATE & PROGRESSION MANAGER
- */
 const TIERS = [
-    { id: 'lymph', title: 'Lymphatics Mastery Engine', name: 'Lymphatics', accent: '#38bdf8', bank: generateModuleBank('lymph') },
-    { id: 'resp', title: 'Respiratory Mastery Engine', name: 'Respiratory', accent: '#a855f7', bank: generateModuleBank('resp') },
-    { id: 'urin', title: 'Urinary Mastery Engine', name: 'Urinary', accent: '#f59e0b', bank: generateModuleBank('urin') }
+    { id: 'lymph', title: 'Lymphatics Mastery Engine', name: 'Lymphatics', accent: '#38bdf8', bank: buildSystemBank('lymph') },
+    { id: 'resp', title: 'Respiratory Mastery Engine', name: 'Respiratory', accent: '#a855f7', bank: buildSystemBank('resp') },
+    { id: 'urin', title: 'Urinary Mastery Engine', name: 'Urinary', accent: '#f59e0b', bank: buildSystemBank('urin') }
 ];
 
 let currentTierIndex = 0;
 let masterPool = [];
 let reviewQueue = [];
 let currentItem = null;
+let lastMissedId = null; // Guard against immediate re-presentation
 let currentStreak = 0;
 let masteredCount = 0;
-const UNLOCK_THRESHOLD = 84; // 5/6 of 100 is ~83.33, rounded to 84 questions
+const UNLOCK_THRESHOLD = 84; // 5/6 requirement
 
 function initTier(index) {
     currentTierIndex = index;
@@ -554,7 +835,6 @@ function initTier(index) {
     document.getElementById("engine-title").textContent = tier.title;
     document.getElementById("badge-system").textContent = `Module: ${tier.name}`;
 
-    // Update Tier Tabs
     ['lymph', 'resp', 'urin'].forEach((key, i) => {
         const tab = document.getElementById(`tab-${key}`);
         tab.className = 'tier-tab';
@@ -570,12 +850,13 @@ function initTier(index) {
         }
     });
 
-    // Reset pool for this tier
-    masterPool = tier.bank.map((item, idx) => ({ ...item, id: idx }));
+    masterPool = tier.bank.map((item, idx) => ({ ...item, id: `${tier.id}_${idx}` }));
+    // Initial random shuffle of the pool
     masterPool.sort(() => Math.random() - 0.5);
     reviewQueue = [];
     masteredCount = 0;
     currentStreak = 0;
+    lastMissedId = null;
 
     document.getElementById("mastery-screen").style.display = "none";
     document.getElementById("tier-unlocked-screen").style.display = "none";
@@ -606,42 +887,47 @@ function loadNextItem() {
     nextBtn.style.display = "none";
     optionsGrid.innerHTML = "";
 
-    // 5/6 Mastery Threshold Trigger
     if (masteredCount >= UNLOCK_THRESHOLD) {
         document.getElementById("quiz-stage").style.display = "none";
         if (currentTierIndex < TIERS.length - 1) {
             const nextTierName = TIERS[currentTierIndex + 1].name;
             document.getElementById("unlock-heading").textContent = `${nextTierName} Module Unlocked!`;
             document.getElementById("unlock-subtext").innerHTML = `
-                Outstanding! You have mastered <strong>${masteredCount}/100</strong> items in the ${TIERS[currentTierIndex].name} system (surpassing the 5/6 requirement). 
+                Outstanding! You have mastered <strong>${masteredCount}/100</strong> items in the ${TIERS[currentTierIndex].name} system, satisfying the 5/6 requirement. 
                 Clearance granted for <strong>${nextTierName}</strong>.
             `;
             document.getElementById("tier-unlocked-screen").style.display = "block";
         } else {
-            // Final Completion
             document.getElementById("mastery-screen").style.display = "block";
         }
         return;
     }
 
-    // Pull from review queue or master pool
-    if (reviewQueue.length > 0 && Math.random() > 0.45) {
-        currentItem = reviewQueue.shift();
-        document.getElementById("badge-status").textContent = "Reinforcement Item";
-        document.getElementById("badge-status").style.color = "#f59e0b";
+    // Determine candidate pools avoiding immediate repeat of lastMissedId
+    let chosenFromQueue = false;
+
+    // Check if reviewQueue has an eligible question (not lastMissedId, unless queue is the only option)
+    const eligibleQueueIndex = reviewQueue.findIndex(item => item.id !== lastMissedId);
+
+    if (eligibleQueueIndex !== -1 && (masterPool.length === 0 || Math.random() > 0.45)) {
+        currentItem = reviewQueue.splice(eligibleQueueIndex, 1)[0];
+        chosenFromQueue = true;
     } else if (masterPool.length > 0) {
-        currentItem = masterPool.shift();
-        document.getElementById("badge-status").textContent = "Question Pool";
-        document.getElementById("badge-status").style.color = "var(--accent-active)";
-    } else {
+        // Find a random item from masterPool
+        const poolIndex = Math.floor(Math.random() * masterPool.length);
+        currentItem = masterPool.splice(poolIndex, 1)[0];
+    } else if (reviewQueue.length > 0) {
+        // Fallback: only review queue items exist
         currentItem = reviewQueue.shift();
-        document.getElementById("badge-status").textContent = "Review Queue";
-        document.getElementById("badge-status").style.color = "#f59e0b";
+        chosenFromQueue = true;
     }
+
+    document.getElementById("badge-status").textContent = chosenFromQueue ? "Reinforcement Item" : "Question Pool";
+    document.getElementById("badge-status").style.color = chosenFromQueue ? "#f59e0b" : "var(--accent-active)";
 
     document.getElementById("q-text").textContent = currentItem.q;
 
-    // Shuffle options for display while tracking correct text
+    // Randomize option order on each presentation
     const correctText = currentItem.opts[currentItem.ans];
     const shuffledOpts = [...currentItem.opts].sort(() => Math.random() - 0.5);
     const newCorrectIndex = shuffledOpts.indexOf(correctText);
@@ -673,13 +959,18 @@ function handleSelection(selectedIndex, correctIndex, selectedBtn) {
         feedbackCard.innerHTML = `<strong>Correct!</strong> ${currentItem.exp}`;
         currentStreak++;
         masteredCount++;
+        lastMissedId = null; // Reset guard on correct answer
     } else {
         selectedBtn.classList.add("selected-wrong");
         buttons[correctIndex].classList.add("show-correct");
         feedbackCard.className = "feedback-card wrong";
-        feedbackCard.innerHTML = `<strong>Incorrect.</strong> ${currentItem.exp}<br><em style="font-size:0.85rem; color:#fca5a5;">(Queued for spaced repetition)</em>`;
+        feedbackCard.innerHTML = `<strong>Incorrect.</strong> ${currentItem.exp}<br><em style="font-size:0.85rem; color:#fca5a5;">(Item queued for later spaced repetition)</em>`;
         currentStreak = 0;
-        reviewQueue.push(currentItem);
+        
+        lastMissedId = currentItem.id; // Record ID to prevent immediate next-turn selection
+        reviewQueue.push(currentItem); // Reinsert into queue
+        // Shuffle queue to randomize re-emergence order
+        reviewQueue.sort(() => Math.random() - 0.5);
     }
 
     nextBtn.style.display = "block";
@@ -697,7 +988,6 @@ document.getElementById("btn-next").addEventListener("click", () => {
     loadNextItem();
 });
 
-// Launch on load
 window.onload = () => initTier(0);
 </script>
 
